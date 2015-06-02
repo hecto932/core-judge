@@ -1,0 +1,10 @@
+15-06-01 23:37:19 - prueba - DEBUG - message debug
+15-06-01 23:37:19 - prueba - INFO - message info
+15-06-01 23:37:19 - prueba - WARNING - message warning
+15-06-01 23:37:19 - prueba - ERROR - message error
+15-06-01 23:37:19 - prueba - CRITICAL - message critical
+15-06-01 23:38:41 - prueba - DEBUG - message debug
+15-06-01 23:38:41 - prueba - INFO - message info
+15-06-01 23:38:41 - prueba - WARNING - message warning
+15-06-01 23:38:41 - prueba - ERROR - message error
+15-06-01 23:38:41 - prueba - CRITICAL - message critical

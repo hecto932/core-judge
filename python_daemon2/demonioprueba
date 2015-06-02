@@ -1,0 +1,30 @@
+#!/bin/bash
+
+case "$1" in
+	start)
+		echo "Starting service..."
+		#Iniciando demonio
+		python /usr/share/demonioprueba/demonioprueba.py start
+	;;
+
+	stop)
+		echo "Stooping service..."
+		#Deteniendo servicio
+		python /usr/share/demonioprueba/demonioprueba.py stop
+	;;
+
+	restart)
+   		echo "Restarting server"
+    	python /usr/share/demonioprueba/demonioprueba.py restart
+    ;;
+
+  	*)
+   	 	# Refuse to do other stuff
+    	echo "Usage: /etc/init.d/demonioprueba.sh {start|stop|restart}"
+    	exit 1
+    ;;
+
+
+esac
+
+exit 0
