@@ -7,11 +7,7 @@
 
 #include "def_c.h"
  
-int themainmainfunction()
-{
-	fopen();
-	system("ls -l");
-}
+int themainmainfunction();
 
 int main(int argc, char *argv[])
 {
@@ -20,3 +16,5 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+#include "code.c"
