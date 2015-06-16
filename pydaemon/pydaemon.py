@@ -53,7 +53,7 @@ class Daemon:
 daemon = Daemon()
 
 #DEFINIENDO INSTANCIA DE LA CLASE LOGGIN
-logger = logging.getLogger("pydaemon log")
+logger = logging.getLogger("pydaemon")
 
 #DEFINIENDO EL NIVEL DE LOS MENSAJES
 logger.setLevel(logging.INFO)
