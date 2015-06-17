@@ -1,5 +1,0 @@
-In file included from shield_c.c:20:0:
-code.c:8:20: fatal error: iostream: No existe el archivo o el directorio
- #include <iostream>
-                    ^
-compilation terminated.

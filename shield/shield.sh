@@ -12,8 +12,12 @@
 # FUNCTIONALITY
 # ==============
 
-# THE SHIELD MUST BE EXECUTE THIS WAY:
-# sh shield.sh --flag archivo.ext
+# THE SHIELD MUST BE RUN THIS WAY:
+# sh shield.sh --c example.c
+# sh shield.sh --cpp example.cpp
+# sh shield.sh --py2 example.py
+# sh shield.sh --py3 example.py
+# sh shield.sh --java example.java
 
 # FLAGS:
 # =====
@@ -44,46 +48,58 @@ CPP_EXT="cpp"
 # Read more: http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 # Read more: http://www.eis.uva.es/~fergay/III/enlaces/gcc.html
 
-if [ $#=2 ]; then
+# COMPILER OPTIONS FOR PYTHON2 && PYTHON3
+# =======================================
+PY2_COMPILER="python"
+PY3_COMPILER="python3"
+PY2_FLAG="--py2"
+PY3_FLAG="--py3"
+PY_EXT="py"
+PY2_SHIELD="shield_python2.py"
+PY3_SHIELD="shield_python3.py"
+
+if [ $# -gt 1 ]; then
 
 	FLAG=$1
 	FILE=$2
 	EXT="${FILE##*.}"
 
-	if [ $FLAG=$C_FLAG ]; then
-		if [ $EXT=$C_EXT ]; then
-			echo "Execute shield code in c..."
-			echo "Cambiando de nombre..."
+	# C
+	if [ "$FLAG" == "$C_FLAG" ]; then
+		if [ "$EXT" == "$C_EXT" ]; then
+			echo "Running shield code in c..."
+			#echo "Cambiando de nombre..."
 			mv $FILE code.c
-			echo "Refactorizando codigo..."
+			#echo "Refactorizando codigo..."
 			echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-			echo "Compilando..."
+			#echo "Compilando..."
 			$C_COMPILER $C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $C_EXEFILE >/dev/null 2>cerr
 			EXITCODE=$?
 			if [ $EXITCODE=0 ]; then
-				echo "Compilacion exitosa..."
-				echo "Estatus de compilacion: $EXITCODE"
-				./$C_EXEFILE > out_$FILE.txt
+				#echo "Compilacion exitosa..."
+				#echo "Estatus de compilacion: $EXITCODE"
+				echo $EXITCODE
+				#./$C_EXEFILE > out_$FILE.txt
 			else
 				echo "Error de compilación..."
 				echo "Estatus de compilacion: $EXITCODE"
 			fi
-			echo "Colocando todo en su lugar..."
+			#echo "Colocando todo en su lugar..."
 			mv code.c $FILE
-			exit
 		else
 			echo "Incorrect --FLAG or extension"
 		fi	
 	fi
-	echo $FLAG $CPP_FLAG
-	if [ $FLAG=$CPP_FLAG ]; then
-		if [ $EXT=$CPP_EXT ]; then
-			echo "Execute shield code in c++..."
-			echo "Cambiando de nombre..."
+
+	# C++
+	if [ "$FLAG" == "$CPP_FLAG" ]; then
+		if [ "$EXT" == "$CPP_EXT" ]; then
+			echo "Running shield code in c++..."
+			#echo "Cambiando de nombre..."
 			mv $FILE code.c
-			echo "Refactorizando codigo..."
+			#echo "Refactorizando codigo..."
 			echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-			echo "Compilando..."
+			#echo "Compilando..."
 			$CPP_COMPILER $CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $CPP_EXEFILE >/dev/null 2>cerr
 			EXITCODE=$?
 			if [ $EXITCODE=0 ]; then
@@ -94,21 +110,37 @@ if [ $#=2 ]; then
 				echo "Error de compilación..."
 				echo "Estatus de compilacion: $EXITCODE"
 			fi
-			echo "Colocando todo en su lugar..."
+			#echo "Colocando todo en su lugar..."
 			mv code.c $FILE
-			exit
 		else
 			echo "Incorrect --FLAG or extension"
 		fi	
+	fi
+	
+	# PYTHON
+	if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
+		if [[ $FLAG == $PY2_FLAG ]] ; then
+			echo "Running Shield For Python 2..."
+			cat $PY2_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
+			python $FILE >/dev/null 2>cerr
+			echo $?
+		fi
+		if [[ $FLAG == $PY3_FLAG ]]; then
+			echo "Running Shield For Python 3..."
+			cat $PY3_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
+			python3 $FILE >/dev/null 2>cerr
+			echo $?
+		fi
 	fi
 
 	
 else
 	echo "Usage: sh shield.sh --FLAG --PATHFILE"
-  	echo "FLAGS"
-  	echo "====="
-  	echo "Use: --c for C"
-  	echo "Use: --cpp for C++"
-  	echo "Use: --py for Python"
-  	echo "Use: --java for Java"
+  	echo "\tFLAGS"
+  	echo "\t====="
+  	echo "\tUse: --c for C"
+  	echo "\tUse: --cpp for C++"
+  	echo "\tUse: --py2 for Python2"
+  	echo "\tUse: --py3 for Python3"
+  	echo "\tUse: --java for Java"
 fi
