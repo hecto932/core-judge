@@ -13,11 +13,11 @@
 # ==============
 
 # THE SHIELD MUST BE RUN THIS WAY:
-# sh shield.sh --c example.c
-# sh shield.sh --cpp example.cpp
-# sh shield.sh --py2 example.py
-# sh shield.sh --py3 example.py
-# sh shield.sh --java example.java
+# ./shield.sh --c example.c
+# ./shield.sh --cpp example.cpp
+# ./shield.sh --py2 example.py
+# ./shield.sh --py3 example.py
+# ./shield.sh --java example.java
 
 # FLAGS:
 # =====
@@ -57,6 +57,15 @@ PY3_FLAG="--py3"
 PY_EXT="py"
 PY2_SHIELD="shield_python2.py"
 PY3_SHIELD="shield_python3.py"
+PY_OPTIONS="-O -m py_compile"
+
+# COMPILER OPTIONS FOR JAVA
+# =========================
+JAVA_FLAG="--java"
+JAVA_COMPILER="javac"
+JAVA_RUNNER="java"
+JAVA_EXT="java"
+JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
 
 if [ $# -gt 1 ]; then
 
@@ -87,7 +96,7 @@ if [ $# -gt 1 ]; then
 			#echo "Colocando todo en su lugar..."
 			mv code.c $FILE
 		else
-			echo "Incorrect --FLAG or extension"
+			echo "Incorrect --FLAG or extension..."
 		fi	
 	fi
 
@@ -113,29 +122,41 @@ if [ $# -gt 1 ]; then
 			#echo "Colocando todo en su lugar..."
 			mv code.c $FILE
 		else
-			echo "Incorrect --FLAG or extension"
+			echo "C++ shield error: Incorrect --FLAG or extension..."
 		fi	
 	fi
 	
 	# PYTHON
 	if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
-		if [[ $FLAG == $PY2_FLAG ]] ; then
-			echo "Running Shield For Python 2..."
+		if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]] ; then
+			echo "Running shield for python..."
 			cat $PY2_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-			python $FILE >/dev/null 2>cerr
+			$PY2_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
 			echo $?
 		fi
-		if [[ $FLAG == $PY3_FLAG ]]; then
-			echo "Running Shield For Python 3..."
+		if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
+			echo "Running shield for python3..."
 			cat $PY3_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-			python3 $FILE >/dev/null 2>cerr
+			$PY3_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
 			echo $?
 		fi
 	fi
 
+	# JAVA
+	if [[ $FLAG == $JAVA_FLAG ]]; then
+		echo "Running shield for Java..."
+		if [[ $EXT == $JAVA_EXT ]]; then
+			$JAVA_COMPILER $FILE >/dev/null 2>cerr
+			echo $?
+			#$JAVA_RUNNER $JAVA_POLICY "${FILE%.*}" >/dev/null 2>cerr
+			#echo $?
+		else
+			echo "Java shield error: Incorrect --FLAG or extension..."
+		fi
+	fi
 	
 else
-	echo "Usage: sh shield.sh --FLAG --PATHFILE"
+	echo "Usage: ./shield.sh --FLAG --PATHFILE"
   	echo "\tFLAGS"
   	echo "\t====="
   	echo "\tUse: --c for C"
