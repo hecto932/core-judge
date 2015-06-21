@@ -1,3 +1,4 @@
+
 #******************************************
 # * FILE: shield_python2.py               *
 # * AUTOR: Hector Jose Flores Colmenarez  *
@@ -27,3 +28,4 @@ for module in BLACKLIST:
     if module in __builtins__.__dict__:
         #LA ELIMINAMOS
         del __builtins__.__dict__[module]
+

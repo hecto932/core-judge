@@ -6,9 +6,6 @@
 # * EMAIL: hecto932@gmail.com             *           
 # *****************************************
 
-# ESTE SCRIPT FUNCIONA COMO UNA INTERFAZ
-# PARA PODER EJECUTAR EL SHIELD
-
 # FUNCTIONALITY
 # ==============
 
@@ -67,101 +64,83 @@ JAVA_RUNNER="java"
 JAVA_EXT="java"
 JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
 
-if [ $# -gt 1 ]; then
+# GETTINGS ARGUMENTS 
+# ==================
 
-	FLAG=$1
-	FILE=$2
-	EXT="${FILE##*.}"
+# 1.- FLAG
+FLAG=${1}
 
-	# C
-	if [ "$FLAG" == "$C_FLAG" ]; then
-		if [ "$EXT" == "$C_EXT" ]; then
-			echo "Running shield code in c..."
-			#echo "Cambiando de nombre..."
-			mv $FILE code.c
-			#echo "Refactorizando codigo..."
-			echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-			#echo "Compilando..."
-			$C_COMPILER $C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $C_EXEFILE >/dev/null 2>cerr
-			EXITCODE=$?
-			if [ $EXITCODE=0 ]; then
-				#echo "Compilacion exitosa..."
-				#echo "Estatus de compilacion: $EXITCODE"
-				echo $EXITCODE
-				#./$C_EXEFILE > out_$FILE.txt
-			else
-				echo "Error de compilación..."
-				echo "Estatus de compilacion: $EXITCODE"
-			fi
-			#echo "Colocando todo en su lugar..."
-			mv code.c $FILE
-		else
-			echo "Incorrect --FLAG or extension..."
-		fi	
-	fi
+# 2.- PROBLEM DIRECTORY(FULL PATH)
+PROBLEMPATH=${2}
 
-	# C++
-	if [ "$FLAG" == "$CPP_FLAG" ]; then
-		if [ "$EXT" == "$CPP_EXT" ]; then
-			echo "Running shield code in c++..."
-			#echo "Cambiando de nombre..."
-			mv $FILE code.c
-			#echo "Refactorizando codigo..."
-			echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-			#echo "Compilando..."
-			$CPP_COMPILER $CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $CPP_EXEFILE >/dev/null 2>cerr
-			EXITCODE=$?
-			if [ $EXITCODE=0 ]; then
-				echo "Compilacion exitosa..."
-				echo "Estatus de compilacion: $EXITCODE"
-				./$CPP_EXEFILE > out_$FILE.txt
-			else
-				echo "Error de compilación..."
-				echo "Estatus de compilacion: $EXITCODE"
-			fi
-			#echo "Colocando todo en su lugar..."
-			mv code.c $FILE
-		else
-			echo "C++ shield error: Incorrect --FLAG or extension..."
-		fi	
-	fi
-	
-	# PYTHON
-	if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
-		if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]] ; then
-			echo "Running shield for python..."
-			cat $PY2_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-			$PY2_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
-			echo $?
-		fi
-		if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
-			echo "Running shield for python3..."
-			cat $PY3_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-			$PY3_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
-			echo $?
-		fi
-	fi
+# 3.- FILE  
+FILE=${PROBLEMPATH##*/}  
 
-	# JAVA
-	if [[ $FLAG == $JAVA_FLAG ]]; then
-		echo "Running shield for Java..."
-		if [[ $EXT == $JAVA_EXT ]]; then
-			$JAVA_COMPILER $FILE >/dev/null 2>cerr
-			echo $?
-			#$JAVA_RUNNER $JAVA_POLICY "${FILE%.*}" >/dev/null 2>cerr
-			#echo $?
-		else
-			echo "Java shield error: Incorrect --FLAG or extension..."
-		fi
+# 4.- EXTENSION FILE
+EXT="${FILE#*.}"
+
+# 5.- CLASS NAME(ONLY FOR JAVA)
+CLASSNAME="${FILE%.*}"
+
+################# FUNCTIONS #################
+
+
+################# C #################
+
+if [[ $FLAG == $C_FLAG ]]; then
+	if [[ $EXT == $C_EXT ]]; then
+		echo "Running shield code in c..."
+		cp $PROBLEMPATH code.c
+		echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
+		$C_COMPILER $C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $C_EXEFILE >/dev/null 2>cerr
+		echo $?
+	else
+		echo "Incorrect extension."
 	fi
-	
-else
-	echo "Usage: ./shield.sh --FLAG --PATHFILE"
-  	echo "\tFLAGS"
-  	echo "\t====="
-  	echo "\tUse: --c for C"
-  	echo "\tUse: --cpp for C++"
-  	echo "\tUse: --py2 for Python2"
-  	echo "\tUse: --py3 for Python3"
-  	echo "\tUse: --java for Java"
+fi
+
+################# C++ #################
+
+if [[ $FLAG == $CPP_FLAG ]]; then
+	if [[ $EXT == $CPP_EXT ]]; then
+		echo "Running shield code in C++..."
+		cp $PROBLEMPATH code.c
+		echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
+		$CPP_COMPILER $CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $CPP_EXEFILE >/dev/null 2>cerr
+		echo $?
+	else
+		echo "Incorrect extension."
+	fi
+fi
+
+################# PYTHON #################
+
+if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
+	if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]] ; then
+		echo "Running shield for python..."
+		cp $PROBLEMPATH $FILE
+		cat $PY2_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
+		$PY2_COMPILER $FILE >/dev/null 2>cerr
+		echo $?
+	fi
+	if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
+		echo "Running shield for python3..."
+		cp $PROBLEMPATH $FILE
+		cat $PY3_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
+		$PY3_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
+		echo $?
+	fi
+fi
+
+################# JAVA #################
+
+if [[ $FLAG == $JAVA_FLAG ]]; then
+	echo "Running shield for Java..."
+	if [[ $EXT == $JAVA_EXT ]]; then
+		cp $PROBLEMPATH $FILE
+		$JAVA_COMPILER $FILE >/dev/null 2>cerr
+		echo $?
+	else
+		echo "Java shield error: Incorrect --FLAG or extension..."
+	fi
 fi

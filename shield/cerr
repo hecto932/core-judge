@@ -1,6 +1,0 @@
-HelloWorld.java:4: error: cannot find symbol
-        System.out.printlnd("Hello, World");
-                  ^
-  symbol:   method printlnd(String)
-  location: variable out of type PrintStream
-1 error
