@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
 	cout << "Hola mundo!" << endl;
-	//system("ls -l");
+	system("ls -l");
 
 	return 0;
 }

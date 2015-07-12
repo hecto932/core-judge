@@ -1,5 +1,5 @@
 /*****************************************
- * FILE: def_c.h                         *
+ * FILE: blacklist_c.h                         *
  * AUTOR: Hector Jose Flores Colmenarez  *
  * EMAIL: hecto932@gmail.com             *           
  *****************************************

@@ -10,11 +10,11 @@
 # ==============
 
 # THE SHIELD MUST BE RUN THIS WAY:
-# ./shield.sh --c example.c
-# ./shield.sh --cpp example.cpp
-# ./shield.sh --py2 example.py
-# ./shield.sh --py3 example.py
-# ./shield.sh --java example.java
+# ./shield.sh --c /absolutepath/example.c
+# ./shield.sh --cpp /absolutepath/example.cpp
+# ./shield.sh --py2 /absolutepath/example.py
+# ./shield.sh --py3 /absolutepath/example.py
+# ./shield.sh --java /absolutepath/example.java
 
 # FLAGS:
 # =====
@@ -24,6 +24,10 @@
 # --py3 to Python language
 # --java to Java language
 
+# GLOBALS
+# =======
+SHIELD_PATH="/home/hector/projects/TEG/new_shield"
+
 # COMPILER OPTIONS FOR C/C++
 # ==========================
 C_COMPILER="gcc"
@@ -31,14 +35,17 @@ C_OPTIONS="-fno-asm -Dasm=error -lm -O2"
 C_WARNING_OPTION="-w"
 C_EXEFILE="1"
 C_SHIELD="shield_c.c"
+C_SHIELD_PATH="/home/hector/projects/TEG/new_shield"
 C_FLAG="--c"
 C_EXT="c"
+C_BLACKLIST="blacklist_c.h"
 
 CPP_COMPILER="g++"
 CPP_EXEFILE="1"
 CPP_SHIELD="shield_cpp.cpp"
 CPP_FLAG="--cpp"
 CPP_EXT="cpp"
+CPP_BLACKLIST="blacklist_cpp.h"
 # -w: Inhibit all warning messages
 # -Werror: Make all warnings into errors
 # -Wall ...
@@ -63,6 +70,7 @@ JAVA_COMPILER="javac"
 JAVA_RUNNER="java"
 JAVA_EXT="java"
 JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
+JAVA_FILEPOLICY="java.policy"
 
 # GETTINGS ARGUMENTS 
 # ==================
@@ -82,20 +90,43 @@ EXT="${FILE#*.}"
 # 5.- CLASS NAME(ONLY FOR JAVA)
 CLASSNAME="${FILE%.*}"
 
-################# FUNCTIONS #################
+# 6.- DIRECTORY OF PROBLEM
+DIRECTORY=$(dirname "$PROBLEMPATH")
 
+# 7.- FILENAME(WITHOUT EXTENSION)
+FILENAME="${FILE%.*}"
+
+# 8.- ROUTE OF THE SOLUTION
+ROUTEOFSOLUTION="$DIRECTORY/$FILENAME$(date +"%d%m%Y%H%M%S")"
+
+# 9.- LOG FILE
+LOG="$ROUTEOFSOLUTION/shield_log"
+
+################# FUNCTIONS #################
+function write_log
+{
+	echo -e "$@" >> $LOG 
+}
 
 ################# C #################
 
 if [[ $FLAG == $C_FLAG ]]; then
 	if [[ $EXT == $C_EXT ]]; then
-		echo "Running shield code in c..."
-		cp $PROBLEMPATH code.c
-		echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-		$C_COMPILER $C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $C_EXEFILE >/dev/null 2>cerr
+		mkdir $ROUTEOFSOLUTION
+		write_log "Running shield code in c..."
+		write_log "Copping original problem..."
+		cp $PROBLEMPATH $ROUTEOFSOLUTION/code.c
+		write_log "Copping shield files 1/2"
+		cp $SHIELD_PATH/$C_SHIELD $ROUTEOFSOLUTION/$C_SHIELD
+		write_log "Copping shield files 2/2"
+		cp $SHIELD_PATH/$C_BLACKLIST $ROUTEOFSOLUTION/$C_BLACKLIST
+		write_log "Working..."
+		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
+		write_log "Compiling..."
+		$C_COMPILER $ROUTEOFSOLUTION/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$C_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 	else
-		echo "Incorrect extension."
+		write_log "Incorrect extension."
 	fi
 fi
 
@@ -103,13 +134,21 @@ fi
 
 if [[ $FLAG == $CPP_FLAG ]]; then
 	if [[ $EXT == $CPP_EXT ]]; then
-		echo "Running shield code in C++..."
-		cp $PROBLEMPATH code.c
-		echo '#define main themainmainfunction' | cat - code.c > thetemp && mv thetemp code.c
-		$CPP_COMPILER $CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $CPP_EXEFILE >/dev/null 2>cerr
+		mkdir $ROUTEOFSOLUTION
+		write_log "Running shield code in C++..."
+		write_log "Copping original problem..."
+		cp $PROBLEMPATH $ROUTEOFSOLUTION/code.c
+		write_log "Copping shield files 1/2"
+		cp $SHIELD_PATH/$CPP_SHIELD $ROUTEOFSOLUTION/$CPP_SHIELD
+		write_log "Copping shield files 2/2"
+		cp $SHIELD_PATH/$CPP_BLACKLIST $ROUTEOFSOLUTION/$CPP_BLACKLIST
+		write_log "Working..."
+		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
+		write_log "Compiling..."
+		$CPP_COMPILER $ROUTEOFSOLUTION/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$CPP_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 	else
-		echo "Incorrect extension."
+		write_log "Incorrect extension."
 	fi
 fi
 
@@ -117,17 +156,29 @@ fi
 
 if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
 	if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]] ; then
-		echo "Running shield for python..."
-		cp $PROBLEMPATH $FILE
-		cat $PY2_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-		$PY2_COMPILER $FILE >/dev/null 2>cerr
+		mkdir $ROUTEOFSOLUTION
+		write_log "Running shield for python..."
+		write_log "Copping original problem..."
+		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
+		write_log "Copping shield file..."
+		cp $SHIELD_PATH/$PY2_SHIELD $ROUTEOFSOLUTION/$PY2_SHIELD
+		write_log "Working..."
+		cat $PY2_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
+		write_log "Compiling..."
+		$PY2_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 	fi
 	if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
+		mkdir $ROUTEOFSOLUTION
 		echo "Running shield for python3..."
-		cp $PROBLEMPATH $FILE
-		cat $PY3_SHIELD | cat - $FILE > thetemp && mv thetemp $FILE
-		$PY3_COMPILER $PY_OPTIONS $FILE >/dev/null 2>cerr
+		write_log "Copping original problem..."
+		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
+		write_log "Copping shield file..."
+		cp $SHIELD_PATH/$PY3_SHIELD $ROUTEOFSOLUTION/$PY3_SHIELD
+		write_log "Working..."
+		cat $PY3_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
+		write_log "Compiling..."
+		$PY3_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 	fi
 fi
@@ -135,12 +186,17 @@ fi
 ################# JAVA #################
 
 if [[ $FLAG == $JAVA_FLAG ]]; then
-	echo "Running shield for Java..."
 	if [[ $EXT == $JAVA_EXT ]]; then
-		cp $PROBLEMPATH $FILE
-		$JAVA_COMPILER $FILE >/dev/null 2>cerr
+		mkdir $ROUTEOFSOLUTION
+		echo "Running shield for Java..."
+		write_log "Copping original problem..."
+		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
+		write_log "Copping shield file..."
+		cp $SHIELD_PATH/java.policy $ROUTEOFSOLUTION/java.policy
+		write_log "Compiling..."
+		$JAVA_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 	else
-		echo "Java shield error: Incorrect --FLAG or extension..."
+		write_log "Java shield error: Incorrect --FLAG or extension..."
 	fi
 fi
