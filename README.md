@@ -1,7 +1,4 @@
-### MODULOS DE COMPILACION, EJECUCIÓN Y COMPARACION DE SALIDA DE CODIGOS FUENTE
+### Módulos de Compilación, Ejecución y Administración de Comparadores
 
-- SHIELD
-- SANDBOX
-- COMPARADORES
 
 
