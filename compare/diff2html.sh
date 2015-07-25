@@ -10,17 +10,16 @@
 # ==============
 
 # THE SHIELD MUST BE RUN THIS WAY:
-# ./compare.sh -flgs file1 file2
+# ./compare.sh -flags file1 file2
 
 
 # FLAGS:
 # =====
 
 
-
 # GLOBALS
 # =======
-GLOBAL_ARGUMENTS="-ubB"
+GLOBAL_ARGUMENTS1="-bB"
 
 
 # OPTIONS
@@ -31,15 +30,12 @@ GLOBAL_ARGUMENTS="-ubB"
 # GETTINGS ARGUMENTS 
 # ==================
 
-# 1.- ARGUMENTS
-ARGUMENTS=${1}
+# 1.- FILENAME1
+FILENAME1=${1}
 
-# 2.- FILENAME1
-FILENAME1=${2}
+# 2.- FILENAME2
+FILENAME2=${2}
 
-#3.- FILENAME2
-FILENAME2=${3}
+RESULTADO=$(diff -u $FILENAME1 $FILENAME2)
 
-echo "$GLOBAL_ARGUMENTS $FILENAME1 $FILENAME2"
-
-diff $GLOBAL_ARGUMENTS $FILENAME1 $FILENAME2
+echo $RESULTADO
