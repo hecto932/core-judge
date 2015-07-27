@@ -1,3 +1,4 @@
+#define main themainmainfunction
 #include <iostream>
 
 using namespace std;

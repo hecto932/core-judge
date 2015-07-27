@@ -26,7 +26,7 @@
 
 # GLOBALS
 # =======
-SHIELD_PATH="/home/hector/projects/TEG/new_shield"
+SHIELD_PATH="/home/hector/Escritorio/TEG/shield"
 
 # COMPILER OPTIONS FOR C/C++
 # ==========================
@@ -35,7 +35,7 @@ C_OPTIONS="-fno-asm -Dasm=error -lm -O2"
 C_WARNING_OPTION="-w"
 C_EXEFILE="1"
 C_SHIELD="shield_c.c"
-C_SHIELD_PATH="/home/hector/projects/TEG/new_shield"
+C_SHIELD_PATH="/home/hector/Escritorio/TEG/shield"
 C_FLAG="--c"
 C_EXT="c"
 C_BLACKLIST="blacklist_c.h"
@@ -114,11 +114,11 @@ if [[ $FLAG == $C_FLAG ]]; then
 	if [[ $EXT == $C_EXT ]]; then
 		mkdir $ROUTEOFSOLUTION
 		write_log "Running shield code in c..."
-		write_log "Copping original problem..."
+		write_log "Copying original problem..."
 		cp $PROBLEMPATH $ROUTEOFSOLUTION/code.c
-		write_log "Copping shield files 1/2"
+		write_log "Copying shield files 1/2"
 		cp $SHIELD_PATH/$C_SHIELD $ROUTEOFSOLUTION/$C_SHIELD
-		write_log "Copping shield files 2/2"
+		write_log "Copying shield files 2/2"
 		cp $SHIELD_PATH/$C_BLACKLIST $ROUTEOFSOLUTION/$C_BLACKLIST
 		write_log "Working..."
 		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
@@ -200,3 +200,8 @@ if [[ $FLAG == $JAVA_FLAG ]]; then
 		write_log "Java shield error: Incorrect --FLAG or extension..."
 	fi
 fi
+
+#INCLUIR
+
+# 1.- ID DEL SUBMIT
+# 2.- CARPETA COMPETENCIA
