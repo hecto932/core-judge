@@ -6,6 +6,7 @@
 # * EMAIL: hecto932@gmail.com             *           
 # *****************************************
 
+#LIBRARIES 
 import sys
 import os
 import string
@@ -26,9 +27,10 @@ def str2html(s) :
     s2 += s1[i:]
     return ( s2 )
 
+# MAIN
 if ( __name__ == "__main__" ) :
 
-    # Processes command-line options
+    # PROCESS COMAND-LINE OPTIONS
     cmd_line = string.join(sys.argv)
     
     # First, look for "--help"
@@ -59,7 +61,7 @@ if ( __name__ == "__main__" ) :
     if ( ind_chg >= 0 ) :
         del argv[ind_chg:ind_chg+1]
 
-    # Check if both files exists
+    # VERIFY IF BOTH FILES EXISTS
     file1 = argv[-2]
     file2 = argv[-1]
     if not os.access(file1, os.F_OK) :
@@ -69,15 +71,15 @@ if ( __name__ == "__main__" ) :
         print "File %s does not exist or is not readable, aborting." % file2
         sys.exit(1)
 
-    # Invokes "diff"
+    # INVOKES "DIFF"
     diff_stdout = os.popen("diff %s" % string.join(argv[1:]), "r")
     diff_output = diff_stdout.readlines()
     diff_stdout.close()
-    # Maps to store the reported differences
+    # REPORTED DIFFERENCES
     changed = {}
     deleted = {}
     added = {}
-    # Magic regular expression
+    # MAGIC REGULAR EXPRESSION
     diff_re = re.compile(
         r"^(?P<f1_start>\d+)(,(?P<f1_end>\d+))?"+ \
          "(?P<diff>[acd])"+ \
@@ -199,16 +201,16 @@ if ( __name__ == "__main__" ) :
                     <td width="100%%">
                         <table class="table table-bordered table-responsive">
                             <tr>
-                                <td class="modified">Modified lines:&nbsp;</td>
-                                <td class="modified">%s</td>
+                                <td class="color-modified">Modified lines:&nbsp;</td>
+                                <td class="color-modified">%s</td>
                             </tr>
                             <tr>
-                                <td class="added">Added line:&nbsp;</td>
-                                <td class="added">%s</td>
+                                <td class="color-added">Added line:&nbsp;</td>
+                                <td class="color-added">%s</td>
                             </tr>
                             <tr>
-                                <td class="removed">Removed line:&nbsp;</td>
-                                <td class="removed">%s</td>
+                                <td class="color-delete">Removed line:&nbsp;</td>
+                                <td class="color-delete">%s</td>
                             </tr>
                         </table>
                     </td>
@@ -257,10 +259,10 @@ if ( __name__ == "__main__" ) :
             print """
     <tr>
         <td class="linenum">&nbsp;</td>
-        <td class="added">&nbsp;</td>
+        <td class="color-added">&nbsp;</td>
         <td width="16">&nbsp;</td>
         <td class="linenum"><a name="F2_%d">%d</a></td>
-        <td class="added">%s</td>
+        <td class="color-added">%s</td>
     </tr>
 """ % (nl2+1, nl2+1, str2html(f2_lines[nl2]))
             nl2 += 1
@@ -269,10 +271,10 @@ if ( __name__ == "__main__" ) :
             print """
     <tr>
         <td class="linenum"><a name="F1_%d">%d</a></td>
-        <td class="removed">%s</td>
+        <td class="color-delete">%s</td>
         <td width="16">&nbsp;</td>
         <td class="linenum">&nbsp;</td>
-        <td class="removed">&nbsp;</td>
+        <td class="color-delete">&nbsp;</td>
     </tr>
 """ % (nl1+1, nl1+1, str2html(f1_lines[nl1]))
             nl1 += 1
@@ -281,10 +283,10 @@ if ( __name__ == "__main__" ) :
             print """
     <tr>
         <td class="linenum"><a name="F1_%d">%d</a></td>
-        <td class="modified">%s</td>
+        <td class="color-modified">%s</td>
         <td width="16">&nbsp;</td>
         <td class="linenum">%d</td>
-        <td class="modified">%s</td>
+        <td class="color-modified">%s</td>
     </tr>
 """ % (nl1+1, nl1+1, str2html(f1_lines[nl1]), 
        nl2+1, str2html(f2_lines[nl2]))
@@ -296,10 +298,10 @@ if ( __name__ == "__main__" ) :
                 print """
     <tr>
         <td class="linenum">%d</td>
-        <td class="normal">%s</td>
+        <td class="color-ok">%s</td>
         <td width="16">&nbsp;</td>
         <td class="linenum">%d</td>
-        <td class="normal">%s</td>
+        <td class="color-ok">%s</td>
     </tr>
 """ % (nl1+1, str2html(f1_lines[nl1]),
        nl2+1, str2html(f2_lines[nl2]))

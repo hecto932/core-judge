@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # *****************************************
-# * FILE: shield_c.c                      *
+# * FILE: shield.sh                       *
 # * AUTOR: Hector Jose Flores Colmenarez  *
 # * EMAIL: hecto932@gmail.com             *           
 # *****************************************
@@ -26,7 +26,10 @@
 
 # GLOBALS
 # =======
-SHIELD_PATH="/home/hector/Escritorio/TEG/shield"
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+SHIELD_PATH=$SCRIPTPATH
 
 # COMPILER OPTIONS FOR C/C++
 # ==========================
@@ -35,7 +38,6 @@ C_OPTIONS="-fno-asm -Dasm=error -lm -O2"
 C_WARNING_OPTION="-w"
 C_EXEFILE="1"
 C_SHIELD="shield_c.c"
-C_SHIELD_PATH="/home/hector/Escritorio/TEG/shield"
 C_FLAG="--c"
 C_EXT="c"
 C_BLACKLIST="blacklist_c.h"

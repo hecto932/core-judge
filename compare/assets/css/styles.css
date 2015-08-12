@@ -4,6 +4,19 @@ body
 	font-size: 16px;
 }
 
+table { border-collapse: collapse; border-spacing: 0px; }
+
+td.linenum 
+{ 
+	color: #909090; 
+    text-align: right;
+    vertical-align: top;
+    font-weight: bold;
+    border-right: 1px solid black;
+    border-left: 1px solid black; 
+	text-align: center;
+}
+
 .bg-color
 {
 	background: #f3f3f4;
@@ -43,23 +56,23 @@ section
 	text-align: center;
 }
 
-.color-add
+.color-added
 {
-	background: #607D8B;
+	background: #DDDDFF;
 }
 
 .color-delete
 {
-	background: #F44336;
+	background: #FFCCCC;
 
 }
 
 .color-modified
 {
-	background: #4CAF50;
+	background: #BBFFBB;
 }
 
 .color-ok
 {
-	background: #FFF8E1;
+	background: #FFFFE1;
 }

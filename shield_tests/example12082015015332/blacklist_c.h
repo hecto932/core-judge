@@ -19,6 +19,3 @@
 #define fork errorNo10       //FORK NO ESTA PERMITIDA
 #define clone errorNo11      //CLONE NO ESTA PERMITIDA
 #define sleep errorNo12      //SLEEP NO ESTA PERMITIDA
-
-// CONIO
-// OPERACIONES DE SISTEMA EN WINDOWS 
