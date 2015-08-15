@@ -185,8 +185,8 @@ if ( __name__ == "__main__" ) :
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <title>Differences between %s and %s</title>
-                <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
-                <link rel="stylesheet" href="assets/css/styles.css"/>
+                <link href="bootstrap.min.css" rel="stylesheet"/>
+                <link rel="stylesheet" href="styles.css"/>
     """ % (file1, file2)
     print """
         </head>
