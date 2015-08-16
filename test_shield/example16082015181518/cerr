@@ -1,0 +1,3 @@
+/tmp/ccH1u2ld.o: En la función `themainmainfunction':
+shield_c.c:(.text+0x16): referencia a `errorNo1' sin definir
+collect2: error: ld returned 1 exit status
