@@ -3,7 +3,7 @@
 int main()
 {
 	printf("Hola mundo!\n");
-	system("ls -l");
+	//system("ls -l");
 
 	return 0;
 }

@@ -99,7 +99,7 @@ DIRECTORY=$(dirname "$PROBLEMPATH")
 FILENAME="${FILE%.*}"
 
 # 8.- ROUTE OF THE SOLUTION
-ROUTEOFSOLUTION="$DIRECTORY/$FILENAME$(date +"%d%m%Y%H%M%S")"
+ROUTEOFSOLUTION="$DIRECTORY/shield_$FILENAME$(date +"%d%m%Y%H%M%S")"
 
 # 9.- LOG FILE
 LOG="$ROUTEOFSOLUTION/shield_log"
@@ -127,6 +127,7 @@ if [[ $FLAG == $C_FLAG ]]; then
 		write_log "Compiling..."
 		$C_COMPILER $ROUTEOFSOLUTION/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$C_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
+		write_log "Done."
 	else
 		write_log "Incorrect extension."
 	fi
@@ -149,6 +150,7 @@ if [[ $FLAG == $CPP_FLAG ]]; then
 		write_log "Compiling..."
 		$CPP_COMPILER $ROUTEOFSOLUTION/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$CPP_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
+		write_log "Done."
 	else
 		write_log "Incorrect extension."
 	fi
@@ -169,6 +171,7 @@ if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
 		write_log "Compiling..."
 		$PY2_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
+		write_log "Done."
 	fi
 	if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
 		mkdir $ROUTEOFSOLUTION
@@ -182,6 +185,7 @@ if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
 		write_log "Compiling..."
 		$PY3_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
+		write_log "Done."
 	fi
 fi
 
@@ -198,6 +202,7 @@ if [[ $FLAG == $JAVA_FLAG ]]; then
 		write_log "Compiling..."
 		$JAVA_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
+		write_log "Done."
 	else
 		write_log "Java shield error: Incorrect --FLAG or extension..."
 	fi
