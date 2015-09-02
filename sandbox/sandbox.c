@@ -15,6 +15,7 @@
 // http://www.tutorialspoint.com/c_standard_library/c_function_atexit.htm
 // http://refspecs.linuxbase.org/LSB_2.1.0/LSB-generic/LSB-generic/baselib---cxa-atexit.html
 // http://stackoverflow.com/questions/12851184/dlopen-failed-cannot-open-shared-object-file-no-such-file-or-directory
+// http://justanothergeek.chdir.org//2010/03/seccomp-as-sandboxing-solution/
 
 // LIBRARIES
 // =========

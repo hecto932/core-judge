@@ -125,7 +125,7 @@ if [[ $FLAG == $C_FLAG ]]; then
 		write_log "Working..."
 		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
 		write_log "Compiling..."
-		$C_COMPILER $ROUTEOFSOLUTION/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$C_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
+		$C_COMPILER $ROUTEOFSOLUTION/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/../$C_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 		write_log "Done."
 	else
@@ -148,7 +148,7 @@ if [[ $FLAG == $CPP_FLAG ]]; then
 		write_log "Working..."
 		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
 		write_log "Compiling..."
-		$CPP_COMPILER $ROUTEOFSOLUTION/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/$CPP_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
+		$CPP_COMPILER $ROUTEOFSOLUTION/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/../$CPP_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 		write_log "Done."
 	else

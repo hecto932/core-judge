@@ -2,12 +2,13 @@
 
 int main()
 {
-	int n; 
+	int n = 6; 
+	int i;
 
-	while(!feof(stdin))
+	for(i=0;i<n;++i)
 	{
-		scanf("%d", &n);
-		printf("%d\n", n);
+		printf("%d\n", i);
 	}
 
+	return 0;
 }

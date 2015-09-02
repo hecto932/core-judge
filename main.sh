@@ -8,8 +8,8 @@
 
 # FUNCTIONALITY
 # ==============
-# THE MAIN MUST BE RUN THIS WAY:
-# main.sh /FULLPATH/problema.ext --FLAG TIMELIMIT MEMORYLIMIT 
+# main.sh MUST BE RUN THIS WAY:
+# ./main.sh /FULLPATH/problema.ext --FLAG TIMELIMIT MEMORYLIMIT 
 
 # FLAGS:
 # =====
@@ -18,6 +18,9 @@
 # --py2 to Python language
 # --py3 to Python language
 # --java to Java language
+
+# TIMELIMIT (seconds)
+# MEMORYLIMIT (kb)
 
 # GLOBALS
 # =======
@@ -28,12 +31,16 @@ SCRIPT=$(readlink -f "$0")
 # DIRECTORY PATH
 SCRIPTPATH=$(dirname "$SCRIPT")
 
-# TIMELIMIT
+# TIMELIMIT (1m:30s = 90s)
 DEFAULT_TIMELIMIT=90
 
 # MEMORYLIMIT (5MB = 5120 Kb)
 DEFAULT_MEMORYLIMIT=5120
 
+# SANDBOX PRELOAD
+PRELOAD_SANDBOX="sandbox/sandbox.so"
+# SANDBOXPATH
+SANDBOXPATH="sandbox"
 
 # GETTINGS ARGUMENTS 
 # ==================
@@ -59,14 +66,44 @@ EXT="${FILE#*.}"
 # 7.- PATH
 DIRECTORY=$(dirname "$FULLPATH")
 
-if [[ $# -lt 5 ]]; then
+# 8.- INPUT
+INPUT=${5}
+
+# 9.- OUTPUT
+OUTPUT="output.out"
+
+if [[ ! -f $FULLPATH ]]; then
+    echo "File not found!"
+    echo "Exit..."
+    exit 0
+fi
+
+if [[ $#==6 || $#==5 ]]; then
 	#EJECUTANDO EL SHIELD
 
 	RESULT=$($SCRIPTPATH/shield/shield.sh $FLAG $FULLPATH)
 	echo "Running shield...$RESULT"
 	if [[ $RESULT == 0 ]]; then
-		echo "Running sandbox...0"
+
+		# LANGUAJE C/C++
+		if [[ $FLAG=="--c" || $FLAG=="--cpp" ]]; then
+			if [[ $INPUT!="" ]]; then
+				# DOES EXPECT INPUT
+				# echo "DOES EXPECT INPUT"
+				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT"
+				LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
+				echo "Running shield...$?"
+			else
+				# DOESN'T EXPECT INPUT
+				# echo "DOES NOT EXPECT INPUT"
+				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null"
+				LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null
+				echo "Running shield...$?"
+			fi
+		fi
 	else
 		echo "Running sandbox...1"
 	fi
 fi
+
+#./runcode.sh $EXT $MEMLIMIT $TIMELIMIT $TIMELIMITINT $PROBLEMPATH/in/input$i.txt "java -mx${MEMLIMIT}k $JAVA_POLICY $MAINFILENAME"

@@ -5,30 +5,14 @@ CFLAGS = -std=c99 $(COMMON_FLAGS) #-DDEBUG_MALLOC
 CXXFLAGS = $(COMMON_FLAGS)
 SHLIB_CFLAGS = -fPIC $(CFLAGS)
 
-TEST_SRCS := $(shell ls t/test*.c*)
-TEST_EXES := $(patsubst %.c,%,$(patsubst %.cpp,%,$(TEST_SRCS)))
+sandbox.so : sandbox.o malloc.o
+	gcc -shared -o sandbox.so sandbox.o malloc.o -ldl
 
-t/test% : t/test%.c
-	$(CC) $(CFLAGS) -o $@ t/test$*.c -lm
-
-t/test% : t/test%.cpp
-	$(CXX) $(CXXFLAGS) -o $@ t/test$*.cpp -lm
-
-all : EasySandbox.so tests
-
-EasySandbox.so : EasySandbox.o malloc.o
-	gcc -shared -o EasySandbox.so EasySandbox.o malloc.o -ldl
-
-EasySandbox.o : EasySandbox.c
-	gcc -c $(SHLIB_CFLAGS) EasySandbox.c
+sandbox.o : sandbox.c
+	gcc -c $(SHLIB_CFLAGS) sandbox.c
 
 malloc.o : malloc.c
 	gcc -c $(SHLIB_CFLAGS) malloc.c
 
-tests : $(TEST_EXES)
-
-runtests : all
-	./runalltests.sh $(TEST_EXES)
-
 clean :
-	rm -f *.o *.so $(TEST_EXES) core
+	rm -f *.o *.so 
