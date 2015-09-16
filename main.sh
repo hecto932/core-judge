@@ -66,11 +66,14 @@ EXT="${FILE#*.}"
 # 7.- PATH
 DIRECTORY=$(dirname "$FULLPATH")
 
-# 8.- INPUT
-INPUT=${5}
-
-# 9.- OUTPUT
+# 8.- FILENAME_OUTPUT
 OUTPUT="output.out"
+
+# 9.- OUT EXPECTED
+OUT_EXPECTED=${5}
+
+# 10.- INPUT
+INPUT=${6}
 
 if [[ ! -f $FULLPATH ]]; then
     echo "File not found!"
@@ -85,23 +88,31 @@ if [[ $#==6 || $#==5 ]]; then
 	echo "Running shield...$RESULT"
 	if [[ $RESULT == 0 ]]; then
 
+		ulimit -t $TIMELIMIT
+
 		# LANGUAJE C/C++
 		if [[ $FLAG=="--c" || $FLAG=="--cpp" ]]; then
-			if [[ $INPUT!="" ]]; then
-				# DOES EXPECT INPUT
-				# echo "DOES EXPECT INPUT"
-				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT"
-				LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
-				echo "Running shield...$?"
-			else
+			if [[ -z "$INPUT" ]]; then
 				# DOESN'T EXPECT INPUT
 				# echo "DOES NOT EXPECT INPUT"
 				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null"
-				LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null
+				# LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null
+				# echo "Salida del sandbox $?"
+				# echo "timeout -s9 $TIMELIMIT LD_PRELOAD=.$SCRIPTPATH/$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT > /dev/null"
+				$(timeout -s9 $TIMELIMIT $(LD_PRELOAD=$SCRIPTPATH/$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT))
+				echo "Salida del sandbox con timeout $?"
+				echo $?
+			else
+				# DOES EXPECT INPUT
+				 echo "DOES EXPECT INPUT"
+				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT"
+				timeout -t $TIMELIMIT LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
 				echo "Running shield...$?"
+				echo $?
 			fi
 		fi
 	else
+		echo "Compilation error."
 		echo "Running sandbox...1"
 	fi
 fi

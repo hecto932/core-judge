@@ -10,12 +10,18 @@
 # ==============
 
 # THE COMPARE MUST BE RUN THIS WAY:
-# ./compare.sh --diff2html file1 file2
+# ./compare.sh file1 file2 diff2html
 # ./compare.sh file1 file2
 
 # FLAGS:
 # =====
 # --diff2html WITH THIS FLAG WILL HAVE HTML OUTPUT
+
+# STATUS CODE
+# ===========
+# 0 - Files =
+# 1 - Files !=
+# 2 - Some File doesn't exist
 
 # GLOBALS
 # =======
@@ -28,11 +34,13 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 # 1.- FILENAME FILE1
 FILE1=${1}
-FILE1NAME="${FILE1%.*}"
+FILE1NAME=${FILE1##*/}
+FILE1NAME="${FILE1NAME%.*}"
 
 # 2.- FILENAME FILE2
 FILE2=${2}
-FILE2NAME="${FILE2%.*}"
+FILE2NAME=${FILE2##*/}
+FILE2NAME="${FILE2NAME%.*}"
 
 # 3.- FLAG
 FLAG=${3}
@@ -44,13 +52,20 @@ FILENAME="diffrestult.html"
 DIRECTORY=$(dirname "$FILE1")
 
 # 6.- DIRECTORY NAME
-DIRECTORY_NAME="diff_$FILE1NAME$FILE2NAME" 
-echo $DIRECTORY_NAME
+DIRECTORY_NAME="diff_"$FILE1NAME"_"$FILE2NAME 
+
+if [[ ! -f "$FILE1" || ! -f "$FILE2" ]]; then
+	# echo "Some file doesn't exist."
+	exit 2
+fi
 
 # IF YOU WANT TO COMPARE WITH HTML OUTPUT
 if [[ $FLAG == "--diff2html" ]]; then
-
 	# CREATING FOLDERS AND FILE
+	if [[ -d "$DIRECTORY" ]]; then
+		rm -rf $DIRECTORY/$DIRECTORY_NAME
+	fi
+	
 	mkdir $DIRECTORY/$DIRECTORY_NAME
 	cp $SCRIPTPATH/bootstrap.min.css $DIRECTORY/$DIRECTORY_NAME
 	cp $SCRIPTPATH/styles.css $DIRECTORY/$DIRECTORY_NAME
@@ -66,17 +81,5 @@ if [[ $FLAG == "" ]]; then
 	DIFF_RESULT=$?
 	echo $DIFF_RESULT
 fi
-
-# if [[ $DIFF_RESULT == 0 ]]; then
-# 	echo "The files are the same."
-# fi
-
-# if [[ $DIFF_RESULT == 1 ]]; then
-# 	echo "The files are diferents."
-# fi
-
-# if [[ $DIFF_RESULT == 2 ]]; then
-# 	echo "There was something wrong with the diff comand."
-# fi
 
 exit 0
