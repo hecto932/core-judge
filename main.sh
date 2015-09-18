@@ -9,7 +9,7 @@
 # FUNCTIONALITY
 # ==============
 # main.sh MUST BE RUN THIS WAY:
-# ./main.sh /FULLPATH/problema.ext --FLAG TIMELIMIT MEMORYLIMIT 
+# ./main.sh /FULLPATH/problema.ext --FLAG TIMELIMIT MEMORYLIMIT OUTPUT INPUT
 
 # FLAGS:
 # =====
@@ -38,9 +38,12 @@ DEFAULT_TIMELIMIT=90
 DEFAULT_MEMORYLIMIT=5120
 
 # SANDBOX PRELOAD
-PRELOAD_SANDBOX="sandbox/sandbox.so"
+SANDBOX="sandbox/sandbox.so"
 # SANDBOXPATH
 SANDBOXPATH="sandbox"
+
+#EXEFILE
+EXEFILE="1"
 
 # GETTINGS ARGUMENTS 
 # ==================
@@ -75,9 +78,9 @@ OUT_EXPECTED=${5}
 # 10.- INPUT
 INPUT=${6}
 
+
 if [[ ! -f $FULLPATH ]]; then
     echo "File not found!"
-    echo "Exit..."
     exit 0
 fi
 
@@ -92,23 +95,30 @@ if [[ $#==6 || $#==5 ]]; then
 
 		# LANGUAJE C/C++
 		if [[ $FLAG=="--c" || $FLAG=="--cpp" ]]; then
+
+			# IF DOES NOT EXPECT INPUT
 			if [[ -z "$INPUT" ]]; then
-				# DOESN'T EXPECT INPUT
 				# echo "DOES NOT EXPECT INPUT"
 				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null"
 				# LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null
 				# echo "Salida del sandbox $?"
-				# echo "timeout -s9 $TIMELIMIT LD_PRELOAD=.$SCRIPTPATH/$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT > /dev/null"
-				$(timeout -s9 $TIMELIMIT $(LD_PRELOAD=$SCRIPTPATH/$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT))
-				echo "Salida del sandbox con timeout $?"
-				echo $?
+				# CMD="LD_PRELOAD=./sandbox/sandbox.so .$DIRECTORY/$EXEFILE"
+				# timeout $((TIMELIMIT*2)) $CMD >$DIRECTORY/$OUTPUT
+				# echo $?
+				# remove <<entering SECCOMP mode>> from beginning of output:
+				# tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+				# LD_PRELOAD=/home/hector/Escritorio/core-judge/sandbox/sandbox.so /home/hector/Escritorio/1
+
+				timeout -s9 $((TIMELIMIT*2)) .$SCRIPTPATH/sandbox/sandbox.sh /home/hector/Escritorio/1
 			else
 				# DOES EXPECT INPUT
 				 echo "DOES EXPECT INPUT"
 				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT"
-				timeout -t $TIMELIMIT LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
+				timeout --signal=9 $TIMELIMIT LD_PRELOAD=sandbox/sandbox.so $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
 				echo "Running shield...$?"
 				echo $?
+				# remove <<entering SECCOMP mode>> from beginning of output:
+				tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
 			fi
 		fi
 	else

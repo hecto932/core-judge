@@ -55,7 +55,7 @@ DIRECTORY=$(dirname "$FILE1")
 DIRECTORY_NAME="diff_"$FILE1NAME"_"$FILE2NAME 
 
 if [[ ! -f "$FILE1" || ! -f "$FILE2" ]]; then
-	# echo "Some file doesn't exist."
+	echo "Some file doesn't exist."
 	exit 2
 fi
 

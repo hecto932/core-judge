@@ -24,6 +24,13 @@
 # --py3 to Python language
 # --java to Java language
 
+# STATUS CODES
+# ============
+# 0 - SHIELD SUCCESS
+# 1 - SHIELD FAILED
+# 2 - FILE NOT FOUND
+# 3 - INCORRECT FLAG
+
 # GLOBALS
 # =======
 
@@ -110,6 +117,11 @@ function write_log
 	echo -e "$@" >> $LOG 
 }
 
+if [[ ! -f "$PROBLEMPATH" ]]; then
+	echo "$FILE doesn't exist."
+	exit 3
+fi
+
 ################# C #################
 
 if [[ $FLAG == $C_FLAG ]]; then
@@ -167,9 +179,9 @@ if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
 		write_log "Copping shield file..."
 		cp $SHIELD_PATH/$PY2_SHIELD $ROUTEOFSOLUTION/$PY2_SHIELD
 		write_log "Working..."
-		cat $PY2_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
+		cat $SCRIPTPATH/$PY2_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
 		write_log "Compiling..."
-		$PY2_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
+		$PY2_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
 		write_log "Done."
 	fi
@@ -181,7 +193,7 @@ if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
 		write_log "Copping shield file..."
 		cp $SHIELD_PATH/$PY3_SHIELD $ROUTEOFSOLUTION/$PY3_SHIELD
 		write_log "Working..."
-		cat $PY3_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
+		cat $SCRIPTPATH/$PY3_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
 		write_log "Compiling..."
 		$PY3_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
 		echo $?
