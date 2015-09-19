@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # *****************************************
-# * FILE: main.sh                         *
+# * FILE: sandbox.sh                         *
 # * AUTOR: Hector Jose Flores Colmenarez  *
 # * EMAIL: hecto932@gmail.com             *           
 # *****************************************
@@ -15,7 +15,6 @@
 # 0 - SANDBOX SUCCESS
 # 1 - SANDBOX FAILED
 # 2 - FILE NOT FOUND
-
 
 # GLOBALS
 # =======
@@ -42,18 +41,23 @@ OUTPUT="output.out"
 DIRECTORY=$(dirname "$EXEFILE")
 
 # 5.- RESULT_CODE
-RESULT_CODE="2"
+EXIT_CODE="2"
 
-
-if [[ -z "$INPUT" ]]; then
-	# echo "DOES NOT EXPECT INPUT"
-	RESULT_CODE=$(LD_PRELOAD=$SCRIPTPATH/sandbox.so $EXEFILE > $DIRECTORY/$OUTPUT 2> /dev/null)
-	echo $RESULT_CODE
-	tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+# IF EXIST FILE PROBLEM
+if [[ ! -f "$EXEFILE" ]]; then
+	echo "$EXEFILE doesn't exist."
+	EXIT_CODE=2
 else
-	# echo "DOES EXPECT INPUT"
-	RESULT_CODE=$(LD_PRELOAD=$SCRIPTPATH/sandbox.so $EXEFILE < $INPUT > $DIRECTORY/$OUTPUT 2> /dev/null)
-	echo $RESULT_CODE
-	tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+	if [[ -z "$INPUT" ]]; then
+		# echo "DOES NOT EXPECT INPUT"
+		EXIT_CODE=$(LD_PRELOAD=$SCRIPTPATH/sandbox.so $EXEFILE > $DIRECTORY/$OUTPUT 2> /dev/null)
+		tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+	else
+		# echo "DOES EXPECT INPUT"
+		EXIT_CODE=$(LD_PRELOAD=$SCRIPTPATH/sandbox.so $EXEFILE < $INPUT > $DIRECTORY/$OUTPUT 2> /dev/null)
+		tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+	fi
 fi
 
+echo $EXIT_CODE
+exit $EXIT_CODE
