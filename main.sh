@@ -31,6 +31,7 @@
 # 1 - Error
 # 2 - File not found.
 # 3 - Missing Arguments
+# 4 - Compare is disabled.
 
 # GLOBALS
 # =======
@@ -74,8 +75,13 @@ ON_COMPARE=${7}
 # 8.- ENABLE/DISABLE DIFF2HTML
 ON_DIFF2HMTL=${8}
 
-# 9.- JAVA_POLICY
+# 9.- JAVA_POLICY ENABLE/DISABLE JAVA SECURITY MANAGER
 JAVA_POLICY=${9}
+if [[ $JAVA_POLICY=="1" ]]; then
+	JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
+else
+	JAVA_POLICY=""
+fi
 
 # 10.- DISPLAY_JAVA_EXCEPTION_ON
 DISPLAY_JAVA_EXCEPTION_ON=${10}
@@ -103,6 +109,26 @@ CPP_BLACKLIST="blacklist_cpp.h"
 # Read more: http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 # Read more: http://www.eis.uva.es/~fergay/III/enlaces/gcc.html
 
+# COMPILER OPTIONS FOR PYTHON2 && PYTHON3
+# =======================================
+PY2_COMPILER="python"
+PY3_COMPILER="python3"
+PY2_FLAG="--py2"
+PY3_FLAG="--py3"
+PY_EXT="py"
+PY2_SHIELD="shield_python2.py"
+PY3_SHIELD="shield_python3.py"
+PY_OPTIONS="-O -m py_compile"
+
+# COMPILER OPTIONS FOR JAVA
+# =========================
+JAVA_FLAG="--java"
+JAVA_COMPILER="javac"
+JAVA_RUNNER="java"
+JAVA_EXT="java"
+JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
+JAVA_FILEPOLICY="java.policy"
+
 # MISC
 # ====
 
@@ -121,66 +147,250 @@ OUTPUT="output.txt"
 # CLASS NAME(ONLY FOR JAVA)
 CLASSNAME="${FILE%.*}"
 
-# EXIT_CODE
-
-
+# INPUTNAME 
+INPUTNAME="input.txt"
 
 if [[ ! -f $PROBLEMPATH ]]; then
     echo "File not found!"
     exit 2
 else
-	if [[ $# -eq 10 ]]; then
+	if [[ $# == 10 ]]; then
 
-		# C
-		if [[ $FLAG=="--c" ]]; then
-
-			# VERIFY SHIELD
+		#################### C ####################
+		if [[ $FLAG == $C_FLAG ]]; then
+			echo "LANGUAGE: C"
+			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD=="1" ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH)
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
-				$C_COMPILER $FULLPATH $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
+				$C_COMPILER $FULLPATH $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr 
 				EXIT_CODE=$?
 			fi
 
-			echo "Shield -> $EXIT_CODE"
-			
-			if [[ $EXIT_CODE=="0" ]]; then
-				#VERIFY SANDBOX
-				echo "ON_SANDBOX = $ON_SANDBOX"
-				if [[ $ON_SANDBOX==1 ]]; then
-					echo "Aqui1"
-					if [[ -z "$INPUT" ]]; then
-						echo "Aqui2"
-						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME"
-					else
-						echo "Aqui3"
+			echo "SHIELD = $EXIT_CODE"
+
+			if [[ $EXIT_CODE == "0" ]]; then
+
+				# IF SANDBOX IS ENABLE
+				if [[ $ON_SANDBOX == "1" ]]; then
+
+					# IF THE PROBLEM HAS INPUT
+					if [[ -f $DIRECTORY/input.txt ]]; then
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt
-					fi
-				else
-					if [[ -z "$INPUT" ]]; then
-						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME"
 					else
-						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME"
+					fi
+					EXIT_CODE=$?
+					echo "SANDBOX = $EXIT_CODE"
+				else # IF SANDBOX IS DISABLE
+					
+					# IF THE PROBLEM HAS INPUT
+					if [[ -f $DIRECTORY/input.txt ]]; then
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+					else
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+					fi
+					EXIT_CODE=$?
+					echo "RUN = $EXIT_CODE"
+				fi
+				
+				if [[ $EXIT_CODE == "0" ]]; then
+					if [[ $ON_COMPARE == "1" ]]; then
+						if [[ $ON_DIFF2HMTL == "1" ]]; then
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
+						else
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
+						fi
+						EXIT_CODE=$?
+						echo "COMPARE = $EXIT_CODE"
+					else
+						EXIT_CODE=4
+						echo "COMPARE = Disable."
 					fi
 				fi
-			else
-				EXIT_CODE=1
-			fi
-			echo "Sandbox -> $EXIT_CODE"
-
-			if [[ $ON_COMPARE=="1" ]]; then
-				if [[ $ON_DIFF2HMTL=="1" ]]; then
-					$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html
-				else
-					$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt
-				fi
-				EXIT_CODE=$?
-			else
-				echo "Compare -> disable."
-				echo $EXIT_CODE
 			fi
 		fi
 
+		################### C++ ###################
+		if [[ $FLAG == $CPP_FLAG ]]; then
+			echo "LANGUAGE: C++"
+			# IF SHIELD IS ENABLE
+			if [[ $ON_SHIELD == "1" ]]; then
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			else
+				$CPP_COMPILER $FULLPATH $CPP_OPTIONS $CPP_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
+				EXIT_CODE=$?
+			fi
+
+			echo "SHIELD = $EXIT_CODE"
+			
+			if [[ $EXIT_CODE == "0" ]]; then
+
+				# IF SANDBOX IS ENABLE
+				if [[ $ON_SANDBOX == "1" ]]; then
+
+					# IF THE PROBLEM HAS INPUT
+					if [[ -f $DIRECTORY/input.txt ]]; then
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+					else
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+					fi
+					EXIT_CODE=$?
+					echo "SANDBOX = $EXIT_CODE"
+				else # IF SANDBOX IS DISABLE
+					
+					# IF THE PROBLEM HAS INPUT
+					if [[ -f $DIRECTORY/input.txt ]]; then
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+					else
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+					fi
+					EXIT_CODE=$?
+					echo "RUN = $EXIT_CODE"
+				fi
+
+				if [[ $EXIT_CODE == "0" ]]; then
+					if [[ $ON_COMPARE == "1" ]]; then
+						if [[ $ON_DIFF2HMTL == "1" ]]; then
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
+						else
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
+						fi
+						EXIT_CODE=$?
+						echo "COMPARE = $EXIT_CODE"
+					else
+						EXIT_CODE=4
+						echo "COMPARE = Disable."
+					fi
+				fi
+			fi
+		fi
+
+		################### PYTHON2 ###################
+		if [[ $FLAG == $PY2_FLAG ]]; then
+			echo "LANGUAGE: PYTHON2"
+			# IF SHIELD IS ENABLE
+			if [[ $ON_SHIELD == "1" ]]; then
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			else
+				$PY2_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
+				EXIT_CODE=$?
+			fi
+
+			echo "SHIELD = $EXIT_CODE"
+			
+			if [[ $EXIT_CODE == "0" ]]; then
+
+				# IF THE PROBLEM HAS INPUT
+				if [[ -f $DIRECTORY/input.txt ]]; then
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python2 -O $PROBLEMPATH" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+				else
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python2 -O $PROBLEMPATH" >/dev/null 2>$DIRECTORY/cerr
+				fi
+
+				EXIT_CODE=$?
+
+				echo "RUN = $EXIT_CODE" 
+
+				if [[ $EXIT_CODE == "0" ]]; then
+					if [[ $ON_COMPARE == "1" ]]; then
+						if [[ $ON_DIFF2HMTL == "1" ]]; then
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
+						else
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
+						fi
+						EXIT_CODE=$?
+						echo "COMPARE = $EXIT_CODE"
+					else
+						EXIT_CODE=4
+						echo "COMPARE = Disable."
+					fi
+				fi
+			fi
+		fi
+
+		################### PYTHON3 ###################
+		if [[ $FLAG == $PY3_FLAG ]]; then
+			echo "LANGUAGE: PYTHON3"
+
+			# IF SHIELD IS ENABLE
+			if [[ $ON_SHIELD=="1" ]]; then
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			else
+				$PY3_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
+				EXIT_CODE=$?
+			fi
+
+			echo "SHIELD = $EXIT_CODE"
+			
+			if [[ $EXIT_CODE == "0" ]]; then
+
+				# IF THE PROBLEM HAS INPUT
+				if [[ -f $DIRECTORY/input.txt ]]; then
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python3 -O $PROBLEMPATH" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+				else
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python3 -O $PROBLEMPATH" >/dev/null 2>$DIRECTORY/cerr
+				fi
+				
+				EXIT_CODE=$?
+				echo "RUN = $EXIT_CODE"
+				if [[ $EXIT_CODE == "0" ]]; then
+					if [[ $ON_COMPARE == 1 ]]; then
+						if [[ $ON_DIFF2HMTL == 1 ]]; then
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
+						else
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
+						fi
+						EXIT_CODE=$?
+						echo "COMPARE = $EXIT_CODE"
+					else
+						EXIT_CODE=4
+						echo "COMPARE = Disable."
+					fi
+				fi
+			fi
+		fi
+		################### JAVA ###################
+		if [[ $FLAG == $JAVA_FLAG ]]; then
+			echo "Java"
+			# IF SHIELD IS ENABLE
+			if [[ $ON_SHIELD == 1 ]]; then
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			else
+				$JAVA_COMPILER $PROBLEMPATH >/dev/null 2>$DIRECTORY/cerr >/dev/null 2>$DIRECTORY/cerr
+				EXIT_CODE=$?
+			fi
+
+			echo "SHIELD = $EXIT_CODE"
+			
+			if [[ $EXIT_CODE == 0 ]]; then
+
+				# IF THE PROBLEM HAS INPUT
+				cd $DIRECTORY
+				if [[ -f $DIRECTORY/input.txt ]]; then
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+				else
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+				fi
+				
+				EXIT_CODE=$?
+				echo "RUN = $EXIT_CODE"
+				if [[ $EXIT_CODE == 0 ]]; then
+					if [[ $ON_COMPARE == 1 ]]; then
+						if [[ $ON_DIFF2HMTL == 1 ]]; then
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
+						else
+							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
+						fi
+						EXIT_CODE=$?
+						echo "COMPARE = $EXIT_CODE"
+					else
+						EXIT_CODE=4
+						echo "COMPARE = Disable."
+					fi
+				fi
+			fi
+		fi
 
 	else
 		echo "Missing arguments."
@@ -188,5 +398,4 @@ else
 	fi
 fi
 
-echo $EXIT_CODE
 exit $EXIT_CODE

@@ -36,6 +36,13 @@ INPUT=${6}
 # 6.- EXIT_CODE
 EXIT_CODE=0
 
+# echo $FLAG
+# echo $DIRECTORY
+# echo $MEMORYLIMIT
+# echo $TIMELIMIT
+# echo $CMD
+# echo $INPUT
+
 # DETECTING EXISTENCE OF TIMEOUT
 TIMEOUT_EXISTS=true
 hash timeout 2>/dev/null || TIMEOUT_EXISTS=false
@@ -61,22 +68,20 @@ ulimit -t $TIMELIMIT
 if $TIMEOUT_EXISTS; then
 	# RUN THE COMMAND WITH REAL TIME LIMIT OF TIMELIMIT*2
 	if [[ -z "$INPUT" ]]; then
-		timeout -s9 $((TIMELIMIT*2)) $CMD >  $DIRECTORY/output.txt
+		timeout -s9 $((TIMELIMIT*2)) $CMD > $DIRECTORY/output.txt 2>$DIRECTORY/err
 	else
-		timeout -s9 $((TIMELIMIT*2)) $CMD <$INPUT >  $DIRECTORY/output.txt
+		timeout -s9 $((TIMELIMIT*2)) $CMD <$INPUT > $DIRECTORY/output.txt 2>$DIRECTORY/err
 	fi
+	EXIT_CODE=$?
 else
 	# RUN THE COMMAND
 	if [[ -z "$INPUT" ]]; then
-		$CMD >out 2>err
+		$CMD >$DIRECTORY/output.txt 2>$DIRECTORY/err
 	else
-		$CMD <$INPUT >  $DIRECTORY/output.txt 2>err
+		$CMD <$INPUT > $DIRECTORY/output.txt 2>$DIRECTORY/err
 	fi
-	$CMD <$IN > $DIRECTORY/output.txt 2>err
+	EXIT_CODE=$? 
 fi
 
-EXIT_CODE=$?
-
 echo $EXIT_CODE
-
 exit $EXIT_CODE

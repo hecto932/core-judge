@@ -128,6 +128,8 @@ function rmShieldFilesC
 	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_c.c >/dev/null 2>/dev/null
 	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
 	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.css
+	rm $DIRECTORY/*.html
 }
 
 function rmShieldFilesCPP
@@ -138,6 +140,8 @@ function rmShieldFilesCPP
 	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_cpp.cpp >/dev/null 2>/dev/null
 	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
 	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.css
+	rm $DIRECTORY/*.html
 }
 
 function rmShieldFilesPython2
@@ -146,6 +150,8 @@ function rmShieldFilesPython2
 	rm $DIRECTORY/shield_log 2>/dev/null
 	rm $DIRECTORY/cerr 2>/dev/null
 	rm $DIRECTORY/shield_python2.py 2>/dev/null
+	rm $DIRECTORY/*.css
+	rm $DIRECTORY/*.html
 }
 
 function rmShieldFilesPython3
@@ -154,6 +160,18 @@ function rmShieldFilesPython3
 	rm $DIRECTORY/shield_log 2>/dev/null
 	rm $DIRECTORY/cerr 2>/dev/null
 	rm $DIRECTORY/shield_python3.py 2>/dev/null
+	rm $DIRECTORY/*.css
+	rm $DIRECTORY/*.html
+}
+
+function rmShieldFilesJava
+{
+	rm $DIRECTORY/cerr
+	rm $DIRECTORY/err
+	rm $DIRECTORY/java.policy
+	rm $DIRECTORY/*.class
+	rm $DIRECTORY/*.css
+	rm $DIRECTORY/*.html
 }
 
 # IF EXIST FILE PROBLEM
@@ -203,6 +221,7 @@ fi
 ########################## PYTHON2 ##########################
 
 if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]]; then
+	rmShieldFilesPython2
 	cp $SHIELD_PATH/$PY2_SHIELD $DIRECTORY/$PY2_SHIELD
 	cat $SCRIPTPATH/$PY2_SHIELD | cat - $DIRECTORY/$FILE > thetemp && mv thetemp $DIRECTORY/$FILE
 	$PY2_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
@@ -212,6 +231,7 @@ fi
 ########################## PYTHON3 ##########################
 
 if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
+	rmShieldFilesPython3
 	cp $SHIELD_PATH/$PY3_SHIELD $DIRECTORY/$PY3_SHIELD
 	cat $SCRIPTPATH/$PY3_SHIELD | cat - $DIRECTORY/$FILE > thetemp && mv thetemp $DIRECTORY/$FILE
 	$PY3_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
@@ -221,6 +241,7 @@ fi
 ########################## JAVA ##########################
 
 if [[ $FLAG == $JAVA_FLAG && $EXT == $JAVA_EXT ]]; then
+	rmShieldFilesJava
 	cp $SHIELD_PATH/java.policy $DIRECTORY/java.policy
 	$JAVA_COMPILER $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
 	EXIT_CODE=$?
