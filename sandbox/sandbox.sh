@@ -35,7 +35,7 @@ EXEFILE=${1}
 INPUT=${2}
 
 # 3.- FILENAME_OUTPUT
-OUTPUT="output.out"
+OUTPUT="output.txt"
 
 # 4.- DIRNAME
 DIRECTORY=$(dirname "$EXEFILE")

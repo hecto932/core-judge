@@ -1,68 +1,78 @@
 #!/bin/bash
 
-# This file runs a command with given limits
-# usage: ./runcode.sh extension memorylimit timelimit timelimit_int input_file command
+# *****************************************
+# * FILE: runcode.sh                      *
+# * AUTOR: Hector Jose Flores Colmenarez  *
+# * EMAIL: hecto932@gmail.com             *           
+# *****************************************
 
-# usage: ./runcode.sh --FLAG /FULLPATH/EXEFILE MEMLIMIT TIMELIMIT TIMELIMITINT IN 
+# USAGE: ./runcode.sh --FLAG DIRECTORY MEMORYLIMIT TIMELIMIT COMMAND INPUT(OPTIONAL)
 
-# PARAMS
-# ======
+# STATUS CODES
+# ============
+
+
+# GETTINGS ARGUMENTS 
+# ==================
 
 # 1.- FLAGS
-FLAG=$1
-shift
+FLAG=${1}
 
-# 2.- FILE EXE
-EXT=$1
-shift
+# 2.- PROBLEM DIRECTORY
+DIRECTORY=${2}
 
-# 3.- MEMORYLIMIT
-MEMLIMIT=$1
-shift
+# 2.- MEMORYLIMIT
+MEMORYLIMIT=${3}
 
-# 4.- TIMELIMIT
-TIMELIMIT=$1
-shift
+# 3.- TIMELIMITINT
+TIMELIMIT=${4}
 
-# 5.- TIMELIMITINT
-TIMELIMITINT=$1
-shift
+# 4.- COMMAND
+CMD=${5}
 
-# 6.- INPUT FILE
-IN=$1
-shift
+# 5.- INPUT
+INPUT=${6}
 
-# 7.- COMMAND
-CMD=$@
+# 6.- EXIT_CODE
+EXIT_CODE=0
 
 # DETECTING EXISTENCE OF TIMEOUT
 TIMEOUT_EXISTS=true
 hash timeout 2>/dev/null || TIMEOUT_EXISTS=false
 
-if [ $EXT == "--py2" ]; then
+if [ $FLAG == "--py2" ]; then
         mem=$(pid=$(python2 >/dev/null 2>/dev/null & echo $!) && ps -p $pid -o vsz=; kill $pid >/dev/null 2>/dev/null;)
-        MEMLIMIT=$((MEMLIMIT+mem+5000))
-elif [ $EXT == "--py3" ]; then
+        MEMORYLIMIT=$((MEMORYLIMIT+mem+5000))
+elif [ $FLAG == "--py3" ]; then
         mem=$(pid=$(python3 >/dev/null 2>/dev/null & echo $!) && ps -p $pid -o vsz=; kill $pid >/dev/null 2>/dev/null;)
-        MEMLIMIT=$((MEMLIMIT+mem+5000))
+        MEMORYLIMIT=$((MEMORYLIMIT+mem+5000))
 fi
 
 # IMPOSING MEMORY LIMIT WITH ulimit
-if [ "$EXT" != "--java" ]; then
-	ulimit -v $((MEMLIMIT+10000))
-	ulimit -m $((MEMLIMIT+10000))
-	ulimit -s $((MEMLIMIT+10000))
+if [ "$FLAG" != "--java" ]; then
+	ulimit -v $((MEMORYLIMIT+10000))
+	ulimit -m $((MEMORYLIMIT+10000))
+	ulimit -s $((MEMORYLIMIT+10000))
 fi
 
 # IMPOSING TIME LIMIT WITH ULIMIT
-ulimit -t $TIMELIMITINT
+ulimit -t $TIMELIMIT
 
 if $TIMEOUT_EXISTS; then
-	# RUN THE COMMAND WITH REAL TIME LIMIT OF TIMELIMITINT*2
-	timeout -s9 $((TIMELIMITINT*2)) $CMD <$IN >out
+	# RUN THE COMMAND WITH REAL TIME LIMIT OF TIMELIMIT*2
+	if [[ -z "$INPUT" ]]; then
+		timeout -s9 $((TIMELIMIT*2)) $CMD >  $DIRECTORY/output.txt
+	else
+		timeout -s9 $((TIMELIMIT*2)) $CMD <$INPUT >  $DIRECTORY/output.txt
+	fi
 else
 	# RUN THE COMMAND
-	$CMD <$IN >out 2>err
+	if [[ -z "$INPUT" ]]; then
+		$CMD >out 2>err
+	else
+		$CMD <$INPUT >  $DIRECTORY/output.txt 2>err
+	fi
+	$CMD <$IN > $DIRECTORY/output.txt 2>err
 fi
 
 EXIT_CODE=$?

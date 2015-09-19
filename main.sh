@@ -6,10 +6,8 @@
 # * EMAIL: hecto932@gmail.com             *           
 # *****************************************
 
-# FUNCTIONALITY
-# ==============
-# main.sh MUST BE RUN THIS WAY:
-# ./main.sh /FULLPATH/problema.ext --FLAG TIMELIMIT MEMORYLIMIT OUTPUT INPUT
+# USAGE : ./main.sh /FULLPATH/PROBLEM --FLAG MEMORYLIMIT TIMELIMIT ON_SHIELD ON_SANDBOX ON_COMPARE ON_DIFF2HMTL JAVA_POLICY DISPLAY_JAVA_EXCEPTION_ON
+# =======
 
 # FLAGS:
 # =====
@@ -19,8 +17,20 @@
 # --py3 to Python language
 # --java to Java language
 
-# TIMELIMIT (seconds)
 # MEMORYLIMIT (kb)
+# TIMELIMIT (seconds)
+# ON_SHIELD (0 or 1)
+# ON_SANDBOX (0 or 1)
+# ON_COMPARE (0 or 1)
+# JAVA_POLICY (0 or 1)
+# DISPLAY_JAVA_EXPTION_ON (0 or 1)
+
+# STATUS CODES
+# ============
+# 0 - OK
+# 1 - Error
+# 2 - File not found.
+# 3 - Missing Arguments
 
 # GLOBALS
 # =======
@@ -37,83 +47,146 @@ DEFAULT_TIMELIMIT=90
 # MEMORYLIMIT (5MB = 5120 Kb)
 DEFAULT_MEMORYLIMIT=5120
 
-# SANDBOX PRELOAD
-SANDBOX="sandbox/sandbox.so"
-# SANDBOXPATH
-SANDBOXPATH="sandbox"
-
-#EXEFILE
-EXEFILE="1"
-
 # GETTINGS ARGUMENTS 
 # ==================
 
 # 1.- FULLPATH PROBLEM
-FULLPATH=${1}
+PROBLEMPATH=${1}
 
 # 2.- FLAG
 FLAG=${2}
 
-# 3.- TIMELIMIT(Seconds)
-TIMELIMIT=${3}
+# 3.- MEMORYLIMIT(Kb)
+MEMORYLIMIT=${3}
 
-# 4.- MEMORY LIMIT(Kb)
-MEMORYLIMIT=${4}
+# 4.- TIMELIMIT(Seconds)
+TIMELIMIT=${4}
 
-# 5.- FILE
-FILE=${FULLPATH##*/}  
+# 5.- ENABLE/DISABLE SHIELD
+ON_SHIELD=${5}
 
-# 6.- EXTENSION
+# 6.- ENABLE/DISABLE SANDBOX
+ON_SANDBOX=${6}
+
+# 7.- ENABLE/DISABLE DIFF
+ON_COMPARE=${7}
+
+# 8.- ENABLE/DISABLE DIFF2HTML
+ON_DIFF2HMTL=${8}
+
+# 9.- JAVA_POLICY
+JAVA_POLICY=${9}
+
+# 10.- DISPLAY_JAVA_EXCEPTION_ON
+DISPLAY_JAVA_EXCEPTION_ON=${10}
+
+# COMPILER OPTIONS FOR C/C++
+# ==========================
+C_COMPILER="gcc"
+C_OPTIONS="-fno-asm -Dasm=error -lm -O2"
+C_WARNING_OPTION="-w"
+C_EXEFILE="1"
+C_SHIELD="shield_c.c"
+C_FLAG="--c"
+C_EXT="c"
+C_BLACKLIST="blacklist_c.h"
+
+CPP_COMPILER="g++"
+CPP_EXEFILE="1"
+CPP_SHIELD="shield_cpp.cpp"
+CPP_FLAG="--cpp"
+CPP_EXT="cpp"
+CPP_BLACKLIST="blacklist_cpp.h"
+# -w: Inhibit all warning messages
+# -Werror: Make all warnings into errors
+# -Wall ...
+# Read more: http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+# Read more: http://www.eis.uva.es/~fergay/III/enlaces/gcc.html
+
+# MISC
+# ====
+
+# FILE
+FILE=${PROBLEMPATH##*/}  
+
+# EXTENSION
 EXT="${FILE#*.}"
 
-# 7.- PATH
-DIRECTORY=$(dirname "$FULLPATH")
+# PATH
+DIRECTORY=$(dirname "$PROBLEMPATH")
 
-# 8.- FILENAME_OUTPUT
-OUTPUT="output.out"
+# FILENAME_OUTPUT
+OUTPUT="output.txt"
 
-# 9.- OUT EXPECTED
-OUT_EXPECTED=${5}
+# CLASS NAME(ONLY FOR JAVA)
+CLASSNAME="${FILE%.*}"
 
-# 10.- INPUT
-INPUT=${6}
+# EXIT_CODE
 
 
-if [[ ! -f $FULLPATH ]]; then
+
+if [[ ! -f $PROBLEMPATH ]]; then
     echo "File not found!"
-    exit 0
-fi
+    exit 2
+else
+	if [[ $# -eq 10 ]]; then
 
-if [[ $#==6 || $#==5 ]]; then
-	#EJECUTANDO EL SHIELD
+		# C
+		if [[ $FLAG=="--c" ]]; then
 
-	RESULT=$($SCRIPTPATH/shield/shield.sh $FLAG $FULLPATH)
-	echo "Running shield...$RESULT"
-	if [[ $RESULT == 0 ]]; then
-
-		# LANGUAJE C/C++
-		if [[ $FLAG=="--c" || $FLAG=="--cpp" ]]; then
-
-			# IF DOES NOT EXPECT INPUT
-			if [[ -z "$INPUT" ]]; then
-				echo "DOES NOT EXPECT INPUT"
-				./runcode.sh $FLAG $DIRECTORY/$EXEFILE $TIMELIMIT $TIMELIMIT ./sandbox/sandbox.sh $FLAG $FULLPATH
-				echo $?
+			# VERIFY SHIELD
+			if [[ $ON_SHIELD=="1" ]]; then
+				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH)
 			else
-				# DOES EXPECT INPUT
-				 echo "DOES EXPECT INPUT"
-				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 < $INPUT"
-				timeout --signal=9 $TIMELIMIT LD_PRELOAD=sandbox/sandbox.so $DIRECTORY/1 < $INPUT > $DIRECTORY/$OUTPUT  2> /dev/null
-				echo "Running shield...$?"
-				echo $?
-				# remove <<entering SECCOMP mode>> from beginning of output:
-				tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
+				$C_COMPILER $FULLPATH $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
+				EXIT_CODE=$?
+			fi
+
+			echo "Shield -> $EXIT_CODE"
+			
+			if [[ $EXIT_CODE=="0" ]]; then
+				#VERIFY SANDBOX
+				echo "ON_SANDBOX = $ON_SANDBOX"
+				if [[ $ON_SANDBOX==1 ]]; then
+					echo "Aqui1"
+					if [[ -z "$INPUT" ]]; then
+						echo "Aqui2"
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME"
+					else
+						echo "Aqui3"
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt
+					fi
+				else
+					if [[ -z "$INPUT" ]]; then
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME"
+					else
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt
+					fi
+				fi
+			else
+				EXIT_CODE=1
+			fi
+			echo "Sandbox -> $EXIT_CODE"
+
+			if [[ $ON_COMPARE=="1" ]]; then
+				if [[ $ON_DIFF2HMTL=="1" ]]; then
+					$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html
+				else
+					$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt
+				fi
+				EXIT_CODE=$?
+			else
+				echo "Compare -> disable."
+				echo $EXIT_CODE
 			fi
 		fi
+
+
 	else
-		echo "Compilation error."
-		echo "Running sandbox...1"
+		echo "Missing arguments."
+		exit 3
 	fi
 fi
 
-#./runcode.sh $EXT $MEMLIMIT $TIMELIMIT $TIMELIMITINT $PROBLEMPATH/in/input$i.txt "java -mx${MEMLIMIT}k $JAVA_POLICY $MAINFILENAME"
+echo $EXIT_CODE
+exit $EXIT_CODE
