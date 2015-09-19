@@ -91,25 +91,14 @@ if [[ $#==6 || $#==5 ]]; then
 	echo "Running shield...$RESULT"
 	if [[ $RESULT == 0 ]]; then
 
-		ulimit -t $TIMELIMIT
-
 		# LANGUAJE C/C++
 		if [[ $FLAG=="--c" || $FLAG=="--cpp" ]]; then
 
 			# IF DOES NOT EXPECT INPUT
 			if [[ -z "$INPUT" ]]; then
-				# echo "DOES NOT EXPECT INPUT"
-				# echo "LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null"
-				# LD_PRELOAD=$PRELOAD_SANDBOX $DIRECTORY/1 > $DIRECTORY/$OUTPUT 2> /dev/null
-				# echo "Salida del sandbox $?"
-				# CMD="LD_PRELOAD=./sandbox/sandbox.so .$DIRECTORY/$EXEFILE"
-				# timeout $((TIMELIMIT*2)) $CMD >$DIRECTORY/$OUTPUT
-				# echo $?
-				# remove <<entering SECCOMP mode>> from beginning of output:
-				# tail -n +2 $DIRECTORY/$OUTPUT >thetemp && mv thetemp $DIRECTORY/$OUTPUT
-				# LD_PRELOAD=/home/hector/Escritorio/core-judge/sandbox/sandbox.so /home/hector/Escritorio/1
-
-				timeout -s9 $((TIMELIMIT*2)) .$SCRIPTPATH/sandbox/sandbox.sh /home/hector/Escritorio/1
+				echo "DOES NOT EXPECT INPUT"
+				./runcode.sh $FLAG $DIRECTORY/$EXEFILE $TIMELIMIT $TIMELIMIT ./sandbox/sandbox.sh $FLAG $FULLPATH
+				echo $?
 			else
 				# DOES EXPECT INPUT
 				 echo "DOES EXPECT INPUT"

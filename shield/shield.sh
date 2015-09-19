@@ -111,116 +111,120 @@ ROUTEOFSOLUTION="$DIRECTORY/shield_$FILENAME$(date +"%d%m%Y%H%M%S")"
 # 9.- LOG FILE
 LOG="$ROUTEOFSOLUTION/shield_log"
 
+# 10.- EXIT_CODE
+EXIT_CODE=3
+
 ################# FUNCTIONS #################
 function write_log
 {
 	echo -e "$@" >> $LOG 
 }
 
+function rmShieldFilesC
+{
+	rm $DIRECTORY/$CLASSNAME >/dev/null 2>/dev/null
+	rm $DIRECTORY/output.out >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.h >/dev/null 2>/dev/null
+	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_c.c >/dev/null 2>/dev/null
+	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
+	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
+}
+
+function rmShieldFilesCPP
+{
+	rm $DIRECTORY/$CLASSNAME >/dev/null 2>/dev/null
+	rm $DIRECTORY/output.out >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.h >/dev/null 2>/dev/null
+	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_cpp.cpp >/dev/null 2>/dev/null
+	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
+	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
+}
+
+function rmShieldFilesPython2
+{
+	rm $DIRECTORY/*.pyo 2>/dev/null
+	rm $DIRECTORY/shield_log 2>/dev/null
+	rm $DIRECTORY/cerr 2>/dev/null
+	rm $DIRECTORY/shield_python2.py 2>/dev/null
+}
+
+function rmShieldFilesPython3
+{
+	rm $DIRECTORY/*.pyo 2>/dev/null
+	rm $DIRECTORY/shield_log 2>/dev/null
+	rm $DIRECTORY/cerr 2>/dev/null
+	rm $DIRECTORY/shield_python3.py 2>/dev/null
+}
+
+# IF EXIST FILE PROBLEM
 if [[ ! -f "$PROBLEMPATH" ]]; then
 	echo "$FILE doesn't exist."
-	exit 3
+	EXIT_CODE=2
+	echo
 fi
 
-################# C #################
+############################ C ############################
 
-if [[ $FLAG == $C_FLAG ]]; then
-	if [[ $EXT == $C_EXT ]]; then
-		mkdir $ROUTEOFSOLUTION
-		write_log "Running shield code in c..."
-		write_log "Copying original problem..."
-		cp $PROBLEMPATH $ROUTEOFSOLUTION/code.c
-		write_log "Copying shield files 1/2"
-		cp $SHIELD_PATH/$C_SHIELD $ROUTEOFSOLUTION/$C_SHIELD
-		write_log "Copying shield files 2/2"
-		cp $SHIELD_PATH/$C_BLACKLIST $ROUTEOFSOLUTION/$C_BLACKLIST
-		write_log "Working..."
-		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
-		write_log "Compiling..."
-		$C_COMPILER $ROUTEOFSOLUTION/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/../$C_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
-		echo $?
-		write_log "Done."
+if [[ $FLAG == $C_FLAG && $EXT == $C_EXT ]]; then
+	rmShieldFilesC
+	cp $PROBLEMPATH $DIRECTORY/code.c
+	# if code contains any 'undef', raise compile error:
+	if tr -d ' \t\n\r\f' < $DIRECTORY/code.c | grep -q '#undef'; then
+		echo 'code.c:#undef is not allowed' >cerr
+		EXIT_CODE=1
 	else
-		write_log "Incorrect extension."
+		cp $SHIELD_PATH/$C_SHIELD $DIRECTORY/$C_SHIELD
+		cp $SHIELD_PATH/$C_BLACKLIST $DIRECTORY/$C_BLACKLIST
+		echo '#define main themainmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
+		$C_COMPILER $DIRECTORY/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
+		EXIT_CODE=$?
+
 	fi
 fi
 
-################# C++ #################
+############################ C++ ###########################
 
-if [[ $FLAG == $CPP_FLAG ]]; then
-	if [[ $EXT == $CPP_EXT ]]; then
-		mkdir $ROUTEOFSOLUTION
-		write_log "Running shield code in C++..."
-		write_log "Copping original problem..."
-		cp $PROBLEMPATH $ROUTEOFSOLUTION/code.c
-		write_log "Copping shield files 1/2"
-		cp $SHIELD_PATH/$CPP_SHIELD $ROUTEOFSOLUTION/$CPP_SHIELD
-		write_log "Copping shield files 2/2"
-		cp $SHIELD_PATH/$CPP_BLACKLIST $ROUTEOFSOLUTION/$CPP_BLACKLIST
-		write_log "Working..."
-		echo '#define main themainmainfunction' | cat - $ROUTEOFSOLUTION/code.c > thetemp && mv thetemp $ROUTEOFSOLUTION/code.c
-		write_log "Compiling..."
-		$CPP_COMPILER $ROUTEOFSOLUTION/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $ROUTEOFSOLUTION/../$CPP_EXEFILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
-		echo $?
-		write_log "Done."
+if [[ $EXT == $CPP_EXT && $FLAG == $CPP_FLAG ]]; then
+	rmShieldFilesCPP
+	cp $PROBLEMPATH $DIRECTORY/code.c
+	# if code contains any 'undef', raise compile error:
+	if tr -d ' \t\n\r\f' < $DIRECTORY/code.c | grep -q '#undef'; then
+		echo 'code.c:#undef is not allowed' >cerr
+		EXIT_CODE=1
 	else
-		write_log "Incorrect extension."
+		cp $SHIELD_PATH/$CPP_SHIELD $DIRECTORY/$CPP_SHIELD
+		cp $SHIELD_PATH/$CPP_BLACKLIST $DIRECTORY/$CPP_BLACKLIST
+		echo '#define main themainmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
+		$CPP_COMPILER $DIRECTORY/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
+		EXIT_CODE=$?
 	fi
 fi
 
-################# PYTHON #################
+########################## PYTHON2 ##########################
 
-if [[ $FLAG == $PY2_FLAG || $FLAG == $PY3_FLAG ]]; then
-	if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]] ; then
-		mkdir $ROUTEOFSOLUTION
-		write_log "Running shield for python..."
-		write_log "Copping original problem..."
-		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
-		write_log "Copping shield file..."
-		cp $SHIELD_PATH/$PY2_SHIELD $ROUTEOFSOLUTION/$PY2_SHIELD
-		write_log "Working..."
-		cat $SCRIPTPATH/$PY2_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
-		write_log "Compiling..."
-		$PY2_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
-		echo $?
-		write_log "Done."
-	fi
-	if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
-		mkdir $ROUTEOFSOLUTION
-		echo "Running shield for python3..."
-		write_log "Copping original problem..."
-		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
-		write_log "Copping shield file..."
-		cp $SHIELD_PATH/$PY3_SHIELD $ROUTEOFSOLUTION/$PY3_SHIELD
-		write_log "Working..."
-		cat $SCRIPTPATH/$PY3_SHIELD | cat - $ROUTEOFSOLUTION/$FILE > thetemp && mv thetemp $ROUTEOFSOLUTION/$FILE
-		write_log "Compiling..."
-		$PY3_COMPILER $PY_OPTIONS $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
-		echo $?
-		write_log "Done."
-	fi
+if [[ $FLAG == $PY2_FLAG && $PY_EXT == $EXT ]]; then
+	cp $SHIELD_PATH/$PY2_SHIELD $DIRECTORY/$PY2_SHIELD
+	cat $SCRIPTPATH/$PY2_SHIELD | cat - $DIRECTORY/$FILE > thetemp && mv thetemp $DIRECTORY/$FILE
+	$PY2_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
+	EXIT_CODE=$?
 fi
 
-################# JAVA #################
+########################## PYTHON3 ##########################
 
-if [[ $FLAG == $JAVA_FLAG ]]; then
-	if [[ $EXT == $JAVA_EXT ]]; then
-		mkdir $ROUTEOFSOLUTION
-		echo "Running shield for Java..."
-		write_log "Copping original problem..."
-		cp $PROBLEMPATH $ROUTEOFSOLUTION/$FILE
-		write_log "Copping shield file..."
-		cp $SHIELD_PATH/java.policy $ROUTEOFSOLUTION/java.policy
-		write_log "Compiling..."
-		$JAVA_COMPILER $ROUTEOFSOLUTION/$FILE >/dev/null 2>$ROUTEOFSOLUTION/cerr
-		echo $?
-		write_log "Done."
-	else
-		write_log "Java shield error: Incorrect --FLAG or extension..."
-	fi
+if [[ $FLAG == $PY3_FLAG && $PY_EXT == $EXT ]]; then
+	cp $SHIELD_PATH/$PY3_SHIELD $DIRECTORY/$PY3_SHIELD
+	cat $SCRIPTPATH/$PY3_SHIELD | cat - $DIRECTORY/$FILE > thetemp && mv thetemp $DIRECTORY/$FILE
+	$PY3_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
+	EXIT_CODE=$?
 fi
 
-#INCLUIR
+########################## JAVA ##########################
 
-# 1.- ID DEL SUBMIT
-# 2.- CARPETA COMPETENCIA
+if [[ $FLAG == $JAVA_FLAG && $EXT == $JAVA_EXT ]]; then
+	cp $SHIELD_PATH/java.policy $DIRECTORY/java.policy
+	$JAVA_COMPILER $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
+	EXIT_CODE=$?
+fi
+
+echo $EXIT_CODE
+exit $EXIT_CODE
