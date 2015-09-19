@@ -22,6 +22,7 @@
 # 0 - Files =
 # 1 - Files !=
 # 2 - Some File doesn't exist
+# 3 - Error
 
 # GLOBALS
 # =======
@@ -52,34 +53,36 @@ FILENAME="diffrestult.html"
 DIRECTORY=$(dirname "$FILE1")
 
 # 6.- DIRECTORY NAME
-DIRECTORY_NAME="diff_"$FILE1NAME"_"$FILE2NAME 
+DIRECTORY_NAME="diff_"$FILE1NAME"_"$FILE2NAME.html
+
+# 7.- EXIT_CODE
+EXIT_CODE=3
+
+################# FUNCTIONS #################
+function rmAssets
+{
+	rm $DIRECTORY/bootstrap.min.css >/dev/null 2>/dev/null
+	rm $DIRECTORY/styles.css >/dev/null 2>/dev/null
+}
 
 if [[ ! -f "$FILE1" || ! -f "$FILE2" ]]; then
-	echo "Some file doesn't exist."
-	exit 2
-fi
+	echo "$FILE1NAME or $FILE2NAME doesn't exist."
+	EXIT_CODE=2
+else
 
-# IF YOU WANT TO COMPARE WITH HTML OUTPUT
-if [[ $FLAG == "--diff2html" ]]; then
-	# CREATING FOLDERS AND FILE
-	if [[ -d "$DIRECTORY" ]]; then
-		rm -rf $DIRECTORY/$DIRECTORY_NAME
+	# JUST COMPARE USING DIFF
+	if [[ -z "$FLAG" ]]; then
+		diff $FILE1 $FILE2 > /dev/null 2>&1
+		EXIT_CODE=$?
+	else
+		rmAssets
+		cp $SCRIPTPATH/bootstrap.min.css $DIRECTORY >/dev/null 2>/dev/null
+		cp $SCRIPTPATH/styles.css $DIRECTORY >/dev/null 2>/dev/null
+		python $SCRIPTPATH/diff2html.py $FILE1 $FILE2 > $DIRECTORY/$FILENAME 2>/dev/null
+		diff $FILE1 $FILE2 > /dev/null 2>&1
+		EXIT_CODE=$?
 	fi
-	
-	mkdir $DIRECTORY/$DIRECTORY_NAME
-	cp $SCRIPTPATH/bootstrap.min.css $DIRECTORY/$DIRECTORY_NAME
-	cp $SCRIPTPATH/styles.css $DIRECTORY/$DIRECTORY_NAME
-	python $SCRIPTPATH/diff2html.py $FILE1 $FILE2 > $DIRECTORY/$DIRECTORY_NAME/$FILENAME
-	diff $FILE1 $FILE2 > /dev/null 2>&1
-	DIFF_RESULT=$?
-	echo $DIFF_RESULT
 fi
 
-# IF YOU JUST WANT TO COMPARE
-if [[ $FLAG == "" ]]; then
-	diff $FILE1 $FILE2 > /dev/null 2>&1
-	DIFF_RESULT=$?
-	echo $DIFF_RESULT
-fi
-
-exit 0
+echo $EXIT_CODE
+exit $EXIT_CODE
