@@ -181,16 +181,16 @@ else
 		#################### C ####################
 		if [[ $FLAG == $C_FLAG ]]; then
 			# IF SHIELD IS ENABLE
-			if [[ $ON_SHIELD=="1" ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			if [[ $ON_SHIELD == "1" ]]; then
+				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
 				$C_COMPILER $FULLPATH $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr 
-				EXIT_CODE=$?
+				SHIELD_CODE=$?
 			fi
 
-			judge_log "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $SHIELD_CODE"
 
-			if [[ $EXIT_CODE == "0" ]]; then
+			if [[ $SHIELD_CODE == "0" ]]; then
 
 				# IF SANDBOX IS ENABLE
 				if [[ $ON_SANDBOX == "1" ]]; then
@@ -201,8 +201,8 @@ else
 					else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME"
 					fi
-					EXIT_CODE=$?
-					judge_log "SANDBOX = $EXIT_CODE"
+					SANDBOX_CODE=$?
+					judge_log "SANDBOX = $SANDBOX_CODE"
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -211,8 +211,8 @@ else
 					else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
-					EXIT_CODE=$?
-					judge_log "RUN = $EXIT_CODE"
+					RUN_CODE=$?
+					judge_log "RUN = $RUN_CODE"
 				fi
 				
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -222,10 +222,10 @@ else
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
-						EXIT_CODE=$?
-						judge_log "COMPARE = $EXIT_CODE"
+						COMPARE_CODE=$?
+						judge_log "COMPARE = $COMPARE_CODE"
 					else
-						EXIT_CODE=4
+						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
 				fi
@@ -236,15 +236,15 @@ else
 		if [[ $FLAG == $CPP_FLAG ]]; then
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == "1" ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
 				$CPP_COMPILER $FULLPATH $CPP_OPTIONS $CPP_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
-				EXIT_CODE=$?
+				SHIELD_CODE=$?
 			fi
 
-			judge_log "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $SHIELD_CODE"
 			
-			if [[ $EXIT_CODE == "0" ]]; then
+			if [[ $SHIELD_CODE == "0" ]]; then
 
 				# IF SANDBOX IS ENABLE
 				if [[ $ON_SANDBOX == "1" ]]; then
@@ -255,8 +255,8 @@ else
 					else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
-					EXIT_CODE=$?
-					judge_log "SANDBOX = $EXIT_CODE"
+					SANDBOX_CODE=$?
+					judge_log "SANDBOX = $SANDBOX_CODE"
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -265,8 +265,8 @@ else
 					else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
-					EXIT_CODE=$?
-					judge_log "RUN = $EXIT_CODE"
+					RUN_CODE=$?
+					judge_log "RUN = $RUN_CODE"
 				fi
 
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -276,10 +276,10 @@ else
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
-						EXIT_CODE=$?
-						judge_log "COMPARE = $EXIT_CODE"
+						COMPARE_CODE=$?
+						judge_log "COMPARE = $COMPARE_CODE"
 					else
-						EXIT_CODE=4
+						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
 				fi
@@ -290,15 +290,15 @@ else
 		if [[ $FLAG == $PY2_FLAG ]]; then
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == "1" ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
 				$PY2_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
-				EXIT_CODE=$?
+				SHIELD_CODE=$?
 			fi
 
-			judge_log "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $SHIELD_CODE"
 			
-			if [[ $EXIT_CODE == "0" ]]; then
+			if [[ $SHIELD_CODE == "0" ]]; then
 
 				# IF THE PROBLEM HAS INPUT
 				if [[ -f $DIRECTORY/input.txt ]]; then
@@ -307,9 +307,9 @@ else
 					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python2 -O $PROBLEMPATH" >/dev/null 2>$DIRECTORY/cerr
 				fi
 
-				EXIT_CODE=$?
+				RUN_CODE=$?
 
-				judge_log "RUN = $EXIT_CODE" 
+				judge_log "RUN = $RUN_CODE" 
 
 				if [[ $EXIT_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == "1" ]]; then
@@ -318,10 +318,10 @@ else
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
-						EXIT_CODE=$?
-						judge_log "COMPARE = $EXIT_CODE"
+						COMPARE_CODE=$?
+						judge_log "COMPARE = $COMPARE_CODE"
 					else
-						EXIT_CODE=4
+						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
 				fi
@@ -332,16 +332,16 @@ else
 		if [[ $FLAG == $PY3_FLAG ]]; then
 
 			# IF SHIELD IS ENABLE
-			if [[ $ON_SHIELD=="1" ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+			if [[ $ON_SHIELD == "1" ]]; then
+				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
 				$PY3_COMPILER $PY_OPTIONS $DIRECTORY/$FILE >/dev/null 2>$DIRECTORY/cerr
-				EXIT_CODE=$?
+				SHIELD_CODE=$?
 			fi
 
-			judge_log "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $SHIELD_CODE"
 			
-			if [[ $EXIT_CODE == "0" ]]; then
+			if [[ $SHIELD_CODE == "0" ]]; then
 
 				# IF THE PROBLEM HAS INPUT
 				if [[ -f $DIRECTORY/input.txt ]]; then
@@ -350,8 +350,8 @@ else
 					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "python3 -O $PROBLEMPATH" >/dev/null 2>$DIRECTORY/cerr
 				fi
 				
-				EXIT_CODE=$?
-				judge_log "RUN = $EXIT_CODE"
+				RUN_CODE=$?
+				judge_log "RUN = $RUN_CODE"
 				if [[ $EXIT_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == 1 ]]; then
 						if [[ $ON_DIFF2HMTL == 1 ]]; then
@@ -359,10 +359,10 @@ else
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
-						EXIT_CODE=$?
-						judge_log "COMPARE = $EXIT_CODE"
+						COMPARE_CODE=$?
+						judge_log "COMPARE = $COMPARE_CODE"
 					else
-						EXIT_CODE=4
+						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
 				fi
@@ -372,15 +372,15 @@ else
 		if [[ $FLAG == $JAVA_FLAG ]]; then
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == 1 ]]; then
-				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
+				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
 				$JAVA_COMPILER $PROBLEMPATH >/dev/null 2>$DIRECTORY/cerr >/dev/null 2>$DIRECTORY/cerr
-				EXIT_CODE=$?
+				SHIELD_CODE=$?
 			fi
 
-			judge_log "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $SHIELD_CODE"
 			
-			if [[ $EXIT_CODE == 0 ]]; then
+			if [[ $SHIELD_CODE == 0 ]]; then
 
 				# IF THE PROBLEM HAS INPUT
 				cd $DIRECTORY
@@ -390,8 +390,8 @@ else
 					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 				fi
 				
-				EXIT_CODE=$?
-				judge_log "RUN = $EXIT_CODE"
+				RUN_CODE=$?
+				judge_log "RUN = $RUN_CODE"
 				if [[ $EXIT_CODE == 0 ]]; then
 					if [[ $ON_COMPARE == 1 ]]; then
 						if [[ $ON_DIFF2HMTL == 1 ]]; then
@@ -399,14 +399,24 @@ else
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
-						EXIT_CODE=$?
-						judge_log "COMPARE = $EXIT_CODE"
+						COMPARE_CODE=$?
+						judge_log "COMPARE = $COMPARE_CODE"
 					else
-						EXIT_CODE=4
+						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
+		fi
+
+
+		##################### - RESULTS - #####################
+		if [[ $RUN_CODE == "137" ]]; then
+			judge_log "Killed."
+		fi
+
+		if [[ $RUN_CODE != "0" ]]; then
+			judge_log "Runtime error."
 		fi
 
 	else
