@@ -46,10 +46,10 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
 # TIMELIMIT (1m:30s = 90s)
-DEFAULT_TIMELIMIT=90
+# DEFAULT_TIMELIMIT=90
 
 # MEMORYLIMIT (5MB = 5120 Kb)
-DEFAULT_MEMORYLIMIT=5120
+# DEFAULT_MEMORYLIMIT=5120
 
 # GETTINGS ARGUMENTS 
 # ==================
@@ -153,15 +153,33 @@ CLASSNAME="${FILE%.*}"
 # INPUTNAME 
 INPUTNAME="input.txt"
 
+########### - FUNCTIONS - ###########
+
+LOG="$DIRECTORY/log"; echo "" >>$LOG
+
+function judge_log
+{
+	if $LOG_ON; then
+		echo "$@" >>$LOG 
+	fi
+}
+########### - /FUNCTIONS - ###########
+
+judge_log  "$(date)"
+judge_log  "Language: $EXT"
+judge_log  "Time Limit: $TIMELIMIT s"
+judge_log  "Memory Limit: $MEMORYLIMIT kB"
+
 if [[ ! -f $PROBLEMPATH ]]; then
-    echo "File not found!"
+    judge_log "File not found!"
     exit 2
 else
 	if [[ $# == 10 ]]; then
 
+		
+
 		#################### C ####################
 		if [[ $FLAG == $C_FLAG ]]; then
-			echo "LANGUAGE: C"
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD=="1" ]]; then
 				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
@@ -170,7 +188,7 @@ else
 				EXIT_CODE=$?
 			fi
 
-			echo "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $EXIT_CODE"
 
 			if [[ $EXIT_CODE == "0" ]]; then
 
@@ -184,7 +202,7 @@ else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME"
 					fi
 					EXIT_CODE=$?
-					echo "SANDBOX = $EXIT_CODE"
+					judge_log "SANDBOX = $EXIT_CODE"
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -194,7 +212,7 @@ else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
 					EXIT_CODE=$?
-					echo "RUN = $EXIT_CODE"
+					judge_log "RUN = $EXIT_CODE"
 				fi
 				
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -205,10 +223,10 @@ else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
 						EXIT_CODE=$?
-						echo "COMPARE = $EXIT_CODE"
+						judge_log "COMPARE = $EXIT_CODE"
 					else
 						EXIT_CODE=4
-						echo "COMPARE = Disable."
+						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
@@ -216,7 +234,6 @@ else
 
 		################### C++ ###################
 		if [[ $FLAG == $CPP_FLAG ]]; then
-			echo "LANGUAGE: C++"
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == "1" ]]; then
 				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
@@ -225,7 +242,7 @@ else
 				EXIT_CODE=$?
 			fi
 
-			echo "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $EXIT_CODE"
 			
 			if [[ $EXIT_CODE == "0" ]]; then
 
@@ -239,7 +256,7 @@ else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
 					EXIT_CODE=$?
-					echo "SANDBOX = $EXIT_CODE"
+					judge_log "SANDBOX = $EXIT_CODE"
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -249,7 +266,7 @@ else
 						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "$DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
 					EXIT_CODE=$?
-					echo "RUN = $EXIT_CODE"
+					judge_log "RUN = $EXIT_CODE"
 				fi
 
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -260,10 +277,10 @@ else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
 						EXIT_CODE=$?
-						echo "COMPARE = $EXIT_CODE"
+						judge_log "COMPARE = $EXIT_CODE"
 					else
 						EXIT_CODE=4
-						echo "COMPARE = Disable."
+						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
@@ -271,7 +288,6 @@ else
 
 		################### PYTHON2 ###################
 		if [[ $FLAG == $PY2_FLAG ]]; then
-			echo "LANGUAGE: PYTHON2"
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == "1" ]]; then
 				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
@@ -280,7 +296,7 @@ else
 				EXIT_CODE=$?
 			fi
 
-			echo "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $EXIT_CODE"
 			
 			if [[ $EXIT_CODE == "0" ]]; then
 
@@ -293,7 +309,7 @@ else
 
 				EXIT_CODE=$?
 
-				echo "RUN = $EXIT_CODE" 
+				judge_log "RUN = $EXIT_CODE" 
 
 				if [[ $EXIT_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == "1" ]]; then
@@ -303,10 +319,10 @@ else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
 						EXIT_CODE=$?
-						echo "COMPARE = $EXIT_CODE"
+						judge_log "COMPARE = $EXIT_CODE"
 					else
 						EXIT_CODE=4
-						echo "COMPARE = Disable."
+						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
@@ -314,7 +330,6 @@ else
 
 		################### PYTHON3 ###################
 		if [[ $FLAG == $PY3_FLAG ]]; then
-			echo "LANGUAGE: PYTHON3"
 
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD=="1" ]]; then
@@ -324,7 +339,7 @@ else
 				EXIT_CODE=$?
 			fi
 
-			echo "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $EXIT_CODE"
 			
 			if [[ $EXIT_CODE == "0" ]]; then
 
@@ -336,7 +351,7 @@ else
 				fi
 				
 				EXIT_CODE=$?
-				echo "RUN = $EXIT_CODE"
+				judge_log "RUN = $EXIT_CODE"
 				if [[ $EXIT_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == 1 ]]; then
 						if [[ $ON_DIFF2HMTL == 1 ]]; then
@@ -345,17 +360,16 @@ else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
 						EXIT_CODE=$?
-						echo "COMPARE = $EXIT_CODE"
+						judge_log "COMPARE = $EXIT_CODE"
 					else
 						EXIT_CODE=4
-						echo "COMPARE = Disable."
+						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
 		fi
 		################### JAVA ###################
 		if [[ $FLAG == $JAVA_FLAG ]]; then
-			echo "Java"
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == 1 ]]; then
 				EXIT_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
@@ -364,7 +378,7 @@ else
 				EXIT_CODE=$?
 			fi
 
-			echo "SHIELD = $EXIT_CODE"
+			judge_log "SHIELD = $EXIT_CODE"
 			
 			if [[ $EXIT_CODE == 0 ]]; then
 
@@ -377,7 +391,7 @@ else
 				fi
 				
 				EXIT_CODE=$?
-				echo "RUN = $EXIT_CODE"
+				judge_log "RUN = $EXIT_CODE"
 				if [[ $EXIT_CODE == 0 ]]; then
 					if [[ $ON_COMPARE == 1 ]]; then
 						if [[ $ON_DIFF2HMTL == 1 ]]; then
@@ -386,22 +400,22 @@ else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
 						fi
 						EXIT_CODE=$?
-						echo "COMPARE = $EXIT_CODE"
+						judge_log "COMPARE = $EXIT_CODE"
 					else
 						EXIT_CODE=4
-						echo "COMPARE = Disable."
+						judge_log "COMPARE = Disable."
 					fi
 				fi
 			fi
 		fi
 
 	else
-		echo "Missing arguments."
+		judge_log "Missing arguments."
 		exit 3
 	fi
 fi
 
 END=$(($(date +%s%N)/1000000));
-echo "Total Execution Time: $((END-START)) ms"
+judge_log "Total Execution Time: $((END-START)) ms"
 
 exit $EXIT_CODE

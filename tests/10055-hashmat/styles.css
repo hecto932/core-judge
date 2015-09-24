@@ -1,0 +1,78 @@
+body
+{
+	font-family: Ubuntu, "times new roman", times, roman, serif;
+	font-size: 16px;
+}
+
+table { border-collapse: collapse; border-spacing: 0px; margin: 0px auto;}
+
+td.linenum 
+{ 
+	color: #909090; 
+    text-align: right;
+    vertical-align: top;
+    font-weight: bold;
+    border-right: 1px solid black;
+    border-left: 1px solid black; 
+	text-align: center;
+}
+
+.bg-color
+{
+	background: #f3f3f4;
+}
+
+.header-green
+{
+	background: #1ab394;
+	border-radius: 7px 7px 0px 0px;
+}
+
+.title
+{
+	font-size: 3em;
+	color: white;
+	text-align: center;
+}
+
+footer
+{
+	text-align: center;
+}
+
+section
+{
+	background: white;
+}
+
+.file1, .file2
+{
+	text-align: center;
+	color: gray;
+}
+
+.log-file
+{
+	text-align: center;
+}
+
+.color-added
+{
+	background: #DDDDFF;
+}
+
+.color-delete
+{
+	background: #FFCCCC;
+
+}
+
+.color-modified
+{
+	background: #BBFFBB;
+}
+
+.color-ok
+{
+	background: #FFFFE1;
+}
