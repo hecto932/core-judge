@@ -166,12 +166,12 @@ function rmShieldFilesPython3
 
 function rmShieldFilesJava
 {
-	rm $DIRECTORY/cerr
-	rm $DIRECTORY/err
-	rm $DIRECTORY/java.policy
-	rm $DIRECTORY/*.class
-	rm $DIRECTORY/*.css
-	rm $DIRECTORY/*.html
+	rm $DIRECTORY/cerr 2>/dev/null
+	rm $DIRECTORY/err 2>/dev/null
+	rm $DIRECTORY/java.policy 2>/dev/null
+	rm $DIRECTORY/*.class 2>/dev/null
+	rm $DIRECTORY/*.css 2>/dev/null
+	rm $DIRECTORY/*.html 2>/dev/null
 }
 
 # IF EXIST FILE PROBLEM

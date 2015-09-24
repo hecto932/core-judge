@@ -33,6 +33,9 @@
 # 3 - Missing Arguments
 # 4 - Compare is disabled.
 
+# GET CURRENT TIME (IN MILLISECONDS)
+START=$(($(date +%s%N)/1000000));
+
 # GLOBALS
 # =======
 
@@ -77,7 +80,7 @@ ON_DIFF2HMTL=${8}
 
 # 9.- JAVA_POLICY ENABLE/DISABLE JAVA SECURITY MANAGER
 JAVA_POLICY=${9}
-if [[ $JAVA_POLICY=="1" ]]; then
+if [[ $JAVA_POLICY == "1" ]]; then
 	JAVA_POLICY="-Djava.security.manager -Djava.security.policy=java.policy"
 else
 	JAVA_POLICY=""
@@ -397,5 +400,8 @@ else
 		exit 3
 	fi
 fi
+
+END=$(($(date +%s%N)/1000000));
+echo "Total Execution Time: $((END-START)) ms"
 
 exit $EXIT_CODE

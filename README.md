@@ -22,19 +22,36 @@ If you want to use Core Judge for python, USE IT AT YOUR OWN RISK or provide san
 For running Core judge, a Linux server with following requirements is needed:
 
   * Tools for compiling and running codes (`gcc`, `g++`, `javac`, `java`, `python2` and `python3` commands).
-  * It is better to have `perl` installed for more precise time and memory limit and imposing size limit on output of submitted code.
 
 ## Installation
 
   1. Verify that you have all tools described previously.
   2. Clone this repository, or also, you can download this repository.
+  3. cd sandbox
+  4. make 
   3. Enjoy.
 
 ## Quick use
 
 ```sh
-$ ./main.sh /FULLPATH/problem.ext --FLAG TIMELIMIT MEMORYLIMIT
+$ ./main.sh /FULLPATH/PROBLEM --FLAG MEMORYLIMIT TIMELIMIT ON_SHIELD ON_SANDBOX ON_COMPARE ON_DIFF2HMTL JAVA_POLICY DISPLAY_JAVA_EXCEPTION_ON
 ```
+
+* FLAGS:
+* =====
+* --c to language C
+* --cpp to C++ language
+* --py2 to Python language
+* --py3 to Python language
+* --java to Java language
+
+* MEMORYLIMIT (kb)
+* TIMELIMIT (seconds)
+* ON_SHIELD (0 or 1)
+* ON_SANDBOX (0 or 1)
+* ON_COMPARE (0 or 1)
+* JAVA_POLICY (0 or 1)
+* DISPLAY_JAVA_EXPTION_ON (0 or 1)
 
 * FULLPATH/problem.ext `/home/user/Desktop/example.c`.
 * --FLAG this flag only have four values `--c`, `--cpp`, `--py2`, `--py3` and `--java`.
