@@ -18,13 +18,9 @@ With this line at the beginning of files, all submitted codes which use `goto` w
 
 If you enable Shield, any code that contains `#undef` will get a compilation error.
 
-### Enabling Shield for C or C++
-
-You can enable or disable Shield in `Settings` page.
-
 ### Adding Rules for C/C++
 
-List of `#define` rules is located in files `tester/shield/defc.h` (for C) and `tester/shield/defcpp.h` (for C++). You can add new `#define` rules in these files. The contents of these files is editable in `Settings` page.
+List of `#define` rules is located in files `core-judge/shield/blacklist_c.h` (for C) and `core-judge/shield/blacklist_cpp.h` (for C++). You can add new `#define` rules in these files. 
 
 The syntax used in these files is like this:
 
@@ -44,15 +40,13 @@ The syntax used in these files is like this:
 #define sleep errorNo12      //Sleep is not allowed
 ```
 
-There should be a newline at the end of files `defc.h` and `defcpp.h`.
+There should be a newline at the end of files `blacklist_c.h` and `blacklist_cpp.h`.
 
 Note that lots of these rules are not usable in g++. For example we cannot use `#define fopen errorNo3` for C++. Because it results in compile error.
 
 ## Shield for Python
 
 By enabling Shield for Python, just adds some code at the beginning of submitted Python code before running to prevent using dangerous functions.
-
-You can enable/disable Shield for Python in Settings.
 
 There are ways to escape from Shield in python and use blacklisted functions!
 
@@ -73,7 +67,116 @@ BLACKLIST = [
   'reload',
   #'input'
   ]
-for func in BLACKLIST:
-  if func in __builtins__.__dict__:
-    del __builtins__.__dict__[func]
+for module in BLACKLIST:
+  if module in __builtins__.__dict__:
+    del __builtins__.__dict__[module]
 ```
+
+
+## Java List Exceptions
+
+By enabling Shield for Java, there a file with all exceptions.
+
+```Java
+
+java.lang.ArithmeticException
+java.lang.ArrayIndexOutOfBoundsException
+java.lang.ArrayStoreException
+java.lang.ClassCastException
+java.lang.ClassNotFoundException
+java.lang.CloneNotSupportedException
+java.lang.EnumConstantNotPresentException
+java.lang.Exception
+java.lang.IllegalAccessException
+java.lang.IllegalArgumentException
+java.lang.IllegalMonitorStateException
+java.lang.IllegalStateException
+java.lang.IllegalThreadStateException
+java.lang.IndexOutOfBoundsException
+java.lang.InstantiationException
+java.lang.InterruptedException
+java.lang.NegativeArraySizeException
+java.lang.NoSuchFieldException
+java.lang.NoSuchMethodException
+java.lang.NullPointerException
+java.lang.NumberFormatException
+java.lang.ReflectiveOperationException
+java.lang.RuntimeException
+java.lang.SecurityException
+java.lang.StringIndexOutOfBoundsException
+java.lang.TypeNotPresentException
+java.lang.UnsupportedOperationException
+
+java.lang.AbstractMethodError
+java.lang.AssertionError
+java.lang.BootstrapMethodError
+java.lang.ClassCircularityError
+java.lang.ClassFormatError
+java.lang.Error
+java.lang.ExceptionInInitializerError
+java.lang.IllegalAccessError
+java.lang.IncompatibleClassChangeError
+java.lang.InstantiationError
+java.lang.InternalError
+java.lang.LinkageError
+java.lang.NoClassDefFoundError
+java.lang.NoSuchFieldError
+java.lang.NoSuchMethodError
+java.lang.OutOfMemoryError
+java.lang.StackOverflowError
+java.lang.ThreadDeath
+java.lang.UnknownError
+java.lang.UnsatisfiedLinkError
+java.lang.UnsupportedClassVersionError
+java.lang.VerifyError
+java.lang.VirtualMachineError
+
+java.util.ConcurrentModificationException
+java.util.EmptyStackException
+java.util.MissingResourceException
+java.util.NoSuchElementException
+java.util.TooManyListenersException
+
+java.io.IOError
+java.io.EOFException
+java.io.FileNotFoundException
+java.io.InterruptedIOException
+java.io.InvalidClassException
+java.io.InvalidObjectException
+java.io.IOException
+java.io.NotActiveException
+java.io.NotSerializableException
+java.io.OptionalDataException
+java.io.StreamCorruptedException
+java.io.SyncFailedException
+java.io.UnsupportedEncodingException
+java.io.UTFDataFormatException
+java.io.WriteAbortedException
+
+java.security.AccessControlException
+
+```
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Hector Jose Flores Colmenarez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

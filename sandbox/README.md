@@ -15,3 +15,16 @@ We don't have a solution yet.
 ## Java Sandboxing
 
 Java sandbox is enabled by default using Java Security Manager.
+
+## Usage
+
+```sh
+$ make 
+$ ./sandbox.sh /full_path/exefile /full_path/input.txt(Optional)
+```
+
+ STATUS CODES
+ ============
+* 0 - SANDBOX SUCCESS
+* 1 - SANDBOX FAILED
+* 2 - FILE NOT FOUND
