@@ -6,7 +6,7 @@ You can improve security by enabling alongside Sandbox.
 
 ## C/C++ Sandboxing
 
-For C and C++ codes core-judge using a variant implement of easySandbox[EasySandbox](https://github.com/daveho/EasySandbox) for sandboxing C/C++ codes. EasySandbox limits the running code using **[seccomp](http://lwn.net/Articles/332974/)**, a sandboxing mechanism in Linux kernel.
+For C and C++ codes core-judge use [EasySandbox](https://github.com/daveho/EasySandbox) for sandboxing C/C++ codes. EasySandbox limits the running code using **[seccomp](http://lwn.net/Articles/332974/)**, a sandboxing mechanism in Linux kernel.
 
 ## Python2 and Python3
 
@@ -23,8 +23,10 @@ $ make
 $ ./sandbox.sh /full_path/exefile /full_path/input.txt(Optional)
 ```
 
- STATUS CODES
- ============
+###### STATUS CODES
+###### ============
 * 0 - SANDBOX SUCCESS
 * 1 - SANDBOX FAILED
 * 2 - FILE NOT FOUND
+
+

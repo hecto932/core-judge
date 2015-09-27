@@ -1,10 +1,41 @@
 /*
- *****************************************
- * FILE: sandbox.c                       *
- * AUTOR: Hector Jose Flores Colmenarez  *
- * EMAIL: hecto932@gmail.com             *           
- *****************************************
-*/
+ * EasySandbox: an extremely simple sandbox for untrusted C/C++ programs
+ * Copyright (c) 2012,2013 David Hovemeyer <david.hovemeyer@gmail.com>
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/*
+ * Resources:
+ *
+ * - http://justanothergeek.chdir.org//2010/03/seccomp-as-sandboxing-solution/
+ *
+ *   This is where the idea (and code) to use __libc_start_main as a hook
+ *   into the startup process came from.  However, my implementation is
+ *   slightly different, in that I enable SECCOMP before any of the
+ *   constructor functions run. (Without this modification, constructor
+ *   functions would run with full privileges.)
+ *
+ * - http://www.win.tue.nl/~aeb/linux/lk/lk-14.html
+ *
+ *   Very practical advice on using SECCOMP.
+ */
 
 // LINKS
 // =====
