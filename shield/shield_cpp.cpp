@@ -10,12 +10,12 @@
 
 #include "blacklist_cpp.h"
  
-int themainmainfunction();
+int thenewmainfunction();
 
 int main(int argc, char *argv[])
 {
 
-	themainmainfunction();
+	thenewmainfunction();
 
 	return 0;
 }

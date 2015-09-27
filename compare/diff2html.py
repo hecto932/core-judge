@@ -33,10 +33,6 @@ if ( __name__ == "__main__" ) :
     # PROCESS COMAND-LINE OPTIONS
     cmd_line = string.join(sys.argv)
     
-    # First, look for "--help"
-    if ( len(sys.argv) < 3 ) :
-        print_usage()
-        sys.exit(1)
     for ind_opt in range(len(sys.argv)) :
         if ( sys.argv[ind_opt] == "--help" ) :
             print_usage()
@@ -84,13 +80,10 @@ if ( __name__ == "__main__" ) :
         r"^(?P<f1_start>\d+)(,(?P<f1_end>\d+))?"+ \
          "(?P<diff>[acd])"+ \
          "(?P<f2_start>\d+)(,(?P<f2_end>\d+))?")
-    # Now parse the output from "diff"
     for diff_line in diff_output:
         diffs = diff_re.match(string.strip(diff_line))
         # If the line doesn't match, it's useless for us
         if not ( diffs  == None ) :
-            # Retrieving informations about the differences : 
-            # starting and ending lines (may be the same)
             f1_start = int(diffs.group("f1_start"))
             if ( diffs.group("f1_end") == None ) :
                 f1_end = f1_start
@@ -103,36 +96,27 @@ if ( __name__ == "__main__" ) :
                 f2_end = int(diffs.group("f2_end"))
             f1_nb = (f1_end - f1_start) + 1
             f2_nb = (f2_end - f2_start) + 1
-            # Is it a changed (modified) line ?
             if ( diffs.group("diff") == "c" ) :
-                # We have to handle the way "diff" reports lines merged
-                # or splitted
                 if ( f2_nb < f1_nb ) :
-                    # Lines merged : missing lines are marqued "deleted"
                     for lf1 in range(f1_start, f1_start+f2_nb) :
                         changed[lf1] = 0
                     for lf1 in range(f1_start+f2_nb, f1_end+1) :
                         deleted[lf1] = 0
                 elif ( f1_nb < f2_nb ) :
-                    # Lines splitted : extra lines are marqued "added"
                     for lf1 in range(f1_start, f1_end+1) :
                         changed[lf1] = 0
                     for lf2 in range(f2_start+f1_nb, f2_end+1) :
                         added[lf2] = 0
                 else :
-                    # Lines simply modified !
                     for lf1 in range(f1_start, f1_end+1) :
                         changed[lf1] = 0
-            # Is it an added line ?
             elif ( diffs.group("diff") == "a" ) :
                 for lf2 in range(f2_start, f2_end+1):
                     added[lf2] = 0
             else :
-            # OK, so it's a deleted line
                 for lf1 in range(f1_start, f1_end+1) :
                     deleted[lf1] = 0
 
-    # Storing the two compared files, to produce the HTML output
     f1 = open(file1, "r")
     f1_lines = f1.readlines()
     f1.close()
@@ -140,13 +124,9 @@ if ( __name__ == "__main__" ) :
     f2_lines = f2.readlines()
     f2.close()
     
-    # Finding some infos about the files
     f1_stat = os.stat(file1)
     f2_stat = os.stat(file2)
 
-    # Printing the HTML header, and various known informations
-    
-    # Preparing the links to changes
     if ( len(changed) == 0 ) :
         changed_lnks = "None"
     else :
@@ -250,7 +230,6 @@ if ( __name__ == "__main__" ) :
            len(f2_lines), f2_stat[stat.ST_SIZE], 
            time.asctime(time.gmtime(f2_stat[stat.ST_MTIME])))
     
-    # Running through the differences...
     nl1 = nl2 = 0
     while not ( (nl1 >= len(f1_lines)) and (nl2 >= len(f2_lines)) ) :
         if ( added.has_key(nl2+1) ) :
@@ -267,7 +246,6 @@ if ( __name__ == "__main__" ) :
 """ % (nl2+1, nl2+1, str2html(f2_lines[nl2]))
             nl2 += 1
         elif ( deleted.has_key(nl1+1) ) :
-      # This is a deleted line
             print """
     <tr>
         <td class="linenum"><a name="F1_%d">%d</a></td>
@@ -279,7 +257,6 @@ if ( __name__ == "__main__" ) :
 """ % (nl1+1, nl1+1, str2html(f1_lines[nl1]))
             nl1 += 1
         elif ( changed.has_key(nl1+1) ) :
-      # This is a changed (modified) line
             print """
     <tr>
         <td class="linenum"><a name="F1_%d">%d</a></td>
@@ -293,7 +270,6 @@ if ( __name__ == "__main__" ) :
             nl1 += 1
             nl2 += 1
         else :
-      # These lines have nothing special
             if ( not only_changes ) :
                 print """
     <tr>
@@ -308,7 +284,6 @@ if ( __name__ == "__main__" ) :
             nl1 += 1
             nl2 += 1
             
-    # And finally, the end of the HTML
     print """
         </table>
         <hr/>

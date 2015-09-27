@@ -193,7 +193,7 @@ if [[ $FLAG == $C_FLAG && $EXT == $C_EXT ]]; then
 	else
 		cp $SHIELD_PATH/$C_SHIELD $DIRECTORY/$C_SHIELD
 		cp $SHIELD_PATH/$C_BLACKLIST $DIRECTORY/$C_BLACKLIST
-		echo '#define main themainmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
+		echo '#define main thenewmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
 		$C_COMPILER $DIRECTORY/$C_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
 		EXIT_CODE=$?
 
@@ -212,7 +212,7 @@ if [[ $EXT == $CPP_EXT && $FLAG == $CPP_FLAG ]]; then
 	else
 		cp $SHIELD_PATH/$CPP_SHIELD $DIRECTORY/$CPP_SHIELD
 		cp $SHIELD_PATH/$CPP_BLACKLIST $DIRECTORY/$CPP_BLACKLIST
-		echo '#define main themainmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
+		echo '#define main thenewmainfunction' | cat - $DIRECTORY/code.c > thetemp && mv thetemp $DIRECTORY/code.c
 		$CPP_COMPILER $DIRECTORY/$CPP_SHIELD $C_OPTIONS $C_WARNING_OPTION -o $DIRECTORY/$CLASSNAME >/dev/null 2>$DIRECTORY/cerr
 		EXIT_CODE=$?
 	fi
