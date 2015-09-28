@@ -6,11 +6,11 @@ You can improve security by enabling alongside Sandbox.
 
 ## C/C++ Sandboxing
 
-For C and C++ codes core-judge use [EasySandbox](https://github.com/daveho/EasySandbox) for sandboxing C/C++ codes. EasySandbox limits the running code using **[seccomp](http://lwn.net/Articles/332974/)**, a sandboxing mechanism in Linux kernel.
+Core-judge use [EasySandbox](https://github.com/daveho/EasySandbox) for sandboxing C/C++ codes. EasySandbox limits the running code using **[seccomp](http://lwn.net/Articles/332974/)**, a sandboxing mechanism in Linux kernel.
 
 ## Python2 and Python3
 
-We don't have a solution yet.
+Don't have a solution yet.
 
 ## Java Sandboxing
 
