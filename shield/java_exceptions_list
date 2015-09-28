@@ -1,3 +1,10 @@
+@file java_exceptions_list
+@author Mohammad Javad Naderi <mjnaderi@gmail.com>
+# List of Some Java Exceptions
+# When "Java Exceptions" is enabled for an assignment, we show the name of an exception if
+# this file contains that name. This is for security reasons.
+# REFERENCE: https://github.com/mjnaderi/Sharif-Judge/blob/7ca3101bb848447e8d8aabb14aae0d6ae9dfde31/tester/java_exceptions_list
+
 # JAVA EXCEPTIONS LIST
 # LIST OF SOME JAVA EXCEPTIONS
 
