@@ -1,3 +1,5 @@
+# REFERENCE: https://github.com/mjnaderi/Sharif-Judge/blob/7ca3101bb848447e8d8aabb14aae0d6ae9dfde31/tester/shield/shield_py2.py
+
 #LIBRERIAS
 import sys
 sys.modules['os'] = None #EXCLUYE OS
