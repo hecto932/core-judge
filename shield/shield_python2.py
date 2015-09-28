@@ -1,10 +1,3 @@
-
-#******************************************
-# * FILE: shield_python2.py               *
-# * AUTOR: Hector Jose Flores Colmenarez  *
-# * EMAIL: hecto932@gmail.com             *           
-#******************************************
-
 #LIBRERIAS
 import sys
 sys.modules['os'] = None #EXCLUYE OS
