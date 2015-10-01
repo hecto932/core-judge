@@ -30,26 +30,28 @@ For running Core judge, a Linux server with following requirements is needed:
 $ ./main.sh /FULLPATH/PROBLEM --FLAG MEMORYLIMIT TIMELIMIT ON_SHIELD ON_SANDBOX ON_COMPARE ON_DIFF2HMTL JAVA_POLICY DISPLAY_JAVA_EXCEPTION_ON
 ```
 
-* FLAGS:
-* =====
-* --c to language C
-* --cpp to C++ language
-* --py2 to Python language
-* --py3 to Python language
-* --java to Java language
+#### FLAGS:
+###### --c to language C.
+###### --cpp to C++ language.
+###### --py2 to Python language
+###### --py3 to Python language
+###### --java to Java language
 
-* MEMORYLIMIT (kb)
-* TIMELIMIT (seconds)
-* ON_SHIELD (0 or 1)
-* ON_SANDBOX (0 or 1)
-* ON_COMPARE (0 or 1)
-* JAVA_POLICY (0 or 1)
-* DISPLAY_JAVA_EXPTION_ON (0 or 1)
+###### MEMORYLIMIT (kb)
+###### TIMELIMIT (seconds)
+###### ON_SHIELD (0 or 1)
+###### ON_SANDBOX (0 or 1)
+###### ON_COMPARE (0 or 1)
+###### JAVA_POLICY (0 or 1)
+###### DISPLAY_JAVA_EXPTION_ON (0 or 1)
 
-* FULLPATH/problem.ext `/home/user/Desktop/example.c`.
-* --FLAG this flag only have four values `--c`, `--cpp`, `--py2`, `--py3` and `--java`.
-* TIMELIMIT expressed in seconds. `1m:30s = 90`.
-* MEMORYLIMIT - Example (5MB = 5120 Kb) `5120`.
+
+```sh
+FULLPATH/problem.ext => /home/user/Desktop/example.c.
+--FLAG => [ --c, --cpp, --py2, --py3, --java]
+```
+###### TIMELIMIT expressed in seconds. `1m:30s = 90`.
+###### MEMORYLIMIT - Example (5MB = 5120 Kb) `5120`.
 
 ## License
 
