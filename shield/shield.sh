@@ -128,8 +128,8 @@ function rmShieldFilesC
 	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_c.c >/dev/null 2>/dev/null
 	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
 	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
-	rm $DIRECTORY/*.css
-	rm $DIRECTORY/*.html
+	rm $DIRECTORY/*.css >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.html >/dev/null 2>/dev/null
 }
 
 function rmShieldFilesCPP
@@ -140,8 +140,8 @@ function rmShieldFilesCPP
 	rm $DIRECTORY/code.c >/dev/null 2>/dev/null && rm $DIRECTORY/shield_cpp.cpp >/dev/null 2>/dev/null
 	rm $DIRECTORY/cerr >/dev/null 2>/dev/null
 	rm $DIRECTORY/shield_log >/dev/null 2>/dev/null
-	rm $DIRECTORY/*.css
-	rm $DIRECTORY/*.html
+	rm $DIRECTORY/*.css >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.html >/dev/null 2>/dev/null
 }
 
 function rmShieldFilesPython2
@@ -150,8 +150,8 @@ function rmShieldFilesPython2
 	rm $DIRECTORY/shield_log 2>/dev/null
 	rm $DIRECTORY/cerr 2>/dev/null
 	rm $DIRECTORY/shield_python2.py 2>/dev/null
-	rm $DIRECTORY/*.css
-	rm $DIRECTORY/*.html
+	rm $DIRECTORY/*.css >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.html >/dev/null 2>/dev/null
 }
 
 function rmShieldFilesPython3
@@ -160,8 +160,8 @@ function rmShieldFilesPython3
 	rm $DIRECTORY/shield_log 2>/dev/null
 	rm $DIRECTORY/cerr 2>/dev/null
 	rm $DIRECTORY/shield_python3.py 2>/dev/null
-	rm $DIRECTORY/*.css
-	rm $DIRECTORY/*.html
+	rm $DIRECTORY/*.css >/dev/null 2>/dev/null
+	rm $DIRECTORY/*.html >/dev/null 2>/dev/null
 }
 
 function rmShieldFilesJava

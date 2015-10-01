@@ -203,6 +203,7 @@ else
 					fi
 					SANDBOX_CODE=$?
 					judge_log "SANDBOX = $SANDBOX_CODE"
+					EXIT_CODE=$SANDBOX_CODE
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -213,6 +214,7 @@ else
 					fi
 					RUN_CODE=$?
 					judge_log "RUN = $RUN_CODE"
+					EXIT_CODE=$RUN_CODE
 				fi
 				
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -251,12 +253,15 @@ else
 
 					# IF THE PROBLEM HAS INPUT
 					if [[ -f $DIRECTORY/input.txt ]]; then
-						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+						cp $SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/Sandbox.so
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=./Sandbox.so $DIRECTORY/$CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
 					else
-						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=$SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+						cp $SCRIPTPATH/sandbox/sandbox.so $DIRECTORY/Sandbox.so
+						$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "LD_PRELOAD=./Sandbox.so $DIRECTORY/$CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
 					fi
 					SANDBOX_CODE=$?
 					judge_log "SANDBOX = $SANDBOX_CODE"
+					EXIT_CODE=$SANDBOX_CODE
 				else # IF SANDBOX IS DISABLE
 					
 					# IF THE PROBLEM HAS INPUT
@@ -267,6 +272,7 @@ else
 					fi
 					RUN_CODE=$?
 					judge_log "RUN = $RUN_CODE"
+					EXIT_CODE=$RUN_CODE
 				fi
 
 				if [[ $EXIT_CODE == "0" ]]; then
@@ -311,7 +317,7 @@ else
 
 				judge_log "RUN = $RUN_CODE" 
 
-				if [[ $EXIT_CODE == "0" ]]; then
+				if [[ $RUN_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == "1" ]]; then
 						if [[ $ON_DIFF2HMTL == "1" ]]; then
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
@@ -352,9 +358,9 @@ else
 				
 				RUN_CODE=$?
 				judge_log "RUN = $RUN_CODE"
-				if [[ $EXIT_CODE == "0" ]]; then
-					if [[ $ON_COMPARE == 1 ]]; then
-						if [[ $ON_DIFF2HMTL == 1 ]]; then
+				if [[ $RUN_CODE == "0" ]]; then
+					if [[ $ON_COMPARE == "1" ]]; then
+						if [[ $ON_DIFF2HMTL == "1" ]]; then
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
 						else
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt >/dev/null 2>$DIRECTORY/cerr
@@ -371,16 +377,16 @@ else
 		################### JAVA ###################
 		if [[ $FLAG == $JAVA_FLAG ]]; then
 			# IF SHIELD IS ENABLE
-			if [[ $ON_SHIELD == 1 ]]; then
+			if [[ $ON_SHIELD == "1" ]]; then
 				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
 			else
-				$JAVA_COMPILER $PROBLEMPATH >/dev/null 2>$DIRECTORY/cerr >/dev/null 2>$DIRECTORY/cerr
+				$JAVA_COMPILER $PROBLEMPATH >/dev/null 2>$DIRECTORY/cerr
 				SHIELD_CODE=$?
 			fi
 
 			judge_log "SHIELD = $SHIELD_CODE"
 			
-			if [[ $SHIELD_CODE == 0 ]]; then
+			if [[ $SHIELD_CODE == "0" ]]; then
 
 				# IF THE PROBLEM HAS INPUT
 				cd $DIRECTORY
@@ -392,7 +398,7 @@ else
 				
 				RUN_CODE=$?
 				judge_log "RUN = $RUN_CODE"
-				if [[ $EXIT_CODE == 0 ]]; then
+				if [[ $RUN_CODE == "0" ]]; then
 					if [[ $ON_COMPARE == 1 ]]; then
 						if [[ $ON_DIFF2HMTL == 1 ]]; then
 							$SCRIPTPATH/compare/compare.sh $DIRECTORY/output.txt $DIRECTORY/expected.txt --diff2html >/dev/null 2>$DIRECTORY/cerr
