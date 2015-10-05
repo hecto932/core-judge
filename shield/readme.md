@@ -1,10 +1,10 @@
-# Shield
+## Shield
 
 Shield is an extremely simple mechanism to forbid running of potentially harmful codes.
 
 Shield is not a sandboxing solution. Shield provides only a partial protection against trivial attacks. 
 
-## Shield for C/C++
+### Shield for C/C++
 
 By enabling Shield for C/C++, just adds some `#define`s at the beginning of submitted C/C++ code before running.
 
@@ -18,7 +18,7 @@ With this line at the beginning of files, all submitted codes which use `goto` w
 
 If you enable Shield, any code that contains `#undef` will get a compilation error.
 
-### Adding Rules for C/C++
+#### Adding Rules for C/C++
 
 List of `#define` rules is located in files `core-judge/shield/blacklist_c.h` (for C) and `core-judge/shield/blacklist_cpp.h` (for C++). You can add new `#define` rules in these files. 
 
@@ -44,7 +44,7 @@ There should be a newline at the end of files `blacklist_c.h` and `blacklist_cpp
 
 Note that lots of these rules are not usable in g++. For example we cannot use `#define fopen errorNo3` for C++. Because it results in compile error.
 
-## Shield for Python
+### Shield for Python
 
 By enabling Shield for Python, just adds some code at the beginning of submitted Python code before running to prevent using dangerous functions.
 
@@ -73,7 +73,7 @@ for module in BLACKLIST:
 ```
 
 
-## Java List Exceptions
+### Java List Exceptions
 
 By enabling Shield for Java, there a file with all exceptions.
 
@@ -156,27 +156,3 @@ java.io.WriteAbortedException
 java.security.AccessControlException
 
 ```
-
-## License
-
-The MIT License (MIT)
-
-Copyright (c) 2015 Hector Jose Flores Colmenarez
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
