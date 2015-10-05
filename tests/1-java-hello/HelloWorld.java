@@ -1,5 +1,3 @@
-import java.lang.ArithmeticException;
-
 public class HelloWorld {
 
     public static void main(String[] args) {
