@@ -8,7 +8,7 @@ public class Arithmetic {
         try {
     		int i = 0 / 0;
 		} catch (ArithmeticException e) {
-		    e.printStackTrace();
+		     System.out.println("ArithmeticException occured!");
 		}
     }
 }

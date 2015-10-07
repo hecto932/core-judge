@@ -1,0 +1,55 @@
+
+mié oct  7 16:01:38 VET 2015
+Language: java
+Time Limit: 30 s
+Memory Limit: 5120 kB
+JAVA_POLICY: "-Djava.security.manager -Djava.security.policy=java.policy"
+DISPLAY_JAVA_EXCEPTION_ON: 1
+SHIELD = 0
+RUN = 0
+COMPARE = Disable.
+Total Execution Time: 566 ms
+
+mié oct  7 16:04:02 VET 2015
+Language: java
+Time Limit: 30 s
+Memory Limit: 5120 kB
+JAVA_POLICY: "-Djava.security.manager -Djava.security.policy=java.policy"
+DISPLAY_JAVA_EXCEPTION_ON: 1
+SHIELD = 0
+RUN = 0
+COMPARE = Disable.
+Total Execution Time: 542 ms
+
+mié oct  7 16:04:28 VET 2015
+Language: java
+Time Limit: 30 s
+Memory Limit: 5120 kB
+JAVA_POLICY: "-Djava.security.manager -Djava.security.policy=java.policy"
+DISPLAY_JAVA_EXCEPTION_ON: 1
+SHIELD = 0
+RUN = 0
+COMPARE = Disable.
+Total Execution Time: 529 ms
+
+mié oct  7 16:05:35 VET 2015
+Language: java
+Time Limit: 30 s
+Memory Limit: 5120 kB
+JAVA_POLICY: "-Djava.security.manager -Djava.security.policy=java.policy"
+DISPLAY_JAVA_EXCEPTION_ON: 1
+SHIELD = 0
+RUN = 0
+COMPARE = Disable.
+Total Execution Time: 548 ms
+
+mié oct  7 16:07:23 VET 2015
+Language: java
+Time Limit: 30 s
+Memory Limit: 5120 kB
+JAVA_POLICY: "-Djava.security.manager -Djava.security.policy=java.policy"
+DISPLAY_JAVA_EXCEPTION_ON: 1
+SHIELD = 0
+RUN = 0
+COMPARE = Disable.
+Total Execution Time: 569 ms

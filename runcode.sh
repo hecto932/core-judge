@@ -10,7 +10,7 @@
 
 # STATUS CODES
 # ============
-
+# timeout exit codes http://www.gnu.org/software/coreutils/manual/html_node/timeout-invocation.html#timeout-invocation
 
 # GETTINGS ARGUMENTS 
 # ==================

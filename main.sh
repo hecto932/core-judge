@@ -376,6 +376,8 @@ else
 		fi
 		################### JAVA ###################
 		if [[ $FLAG == $JAVA_FLAG ]]; then
+			judge_log "JAVA_POLICY: \"$JAVA_POLICY\""
+			judge_log "DISPLAY_JAVA_EXCEPTION_ON: $DISPLAY_JAVA_EXCEPTION_ON"
 			# IF SHIELD IS ENABLE
 			if [[ $ON_SHIELD == "1" ]]; then
 				SHIELD_CODE=$($SCRIPTPATH/shield/shield.sh $FLAG $PROBLEMPATH) >/dev/null 2>$DIRECTORY/cerr
@@ -391,9 +393,9 @@ else
 				# IF THE PROBLEM HAS INPUT
 				cd $DIRECTORY
 				if [[ -f $DIRECTORY/input.txt ]]; then
-					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" $DIRECTORY/input.txt >/dev/null 2>$DIRECTORY/cerr
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" $DIRECTORY/input.txt 
 				else
-					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" >/dev/null 2>$DIRECTORY/cerr
+					$SCRIPTPATH/runcode.sh $FLAG $DIRECTORY $MEMORYLIMIT $TIMELIMIT "java -mx${MEMORYLIMIT}k $JAVA_POLICY $CLASSNAME" 
 				fi
 				
 				RUN_CODE=$?
@@ -411,6 +413,25 @@ else
 						COMPARE_CODE=4
 						judge_log "COMPARE = Disable."
 					fi
+				fi
+				
+				if grep -iq -m 1 "Too small initial heap" output.txt || grep -q -m 1 "java.lang.OutOfMemoryError" err; then
+					judge_log "Memory Limit Exceeded"
+					continue
+				fi
+				
+				# SHOW EXCEPTION
+				if grep -q -m 1 "Exception in" err; then 				
+					javaexceptionname=`grep -m 1 "Exception in" err | grep -m 1 -oE 'java\.[a-zA-Z\.]*' | head -1 | head -c 80`
+					javaexceptionplace=`grep -m 1 "$MAINFILENAME.java" err | head -1 | head -c 80`
+					judge_log "Exception: $javaexceptionname\nMaybe at:$javaexceptionplace"
+
+					if $DISPLAY_JAVA_EXCEPTION_ON && grep -q -m 1 "^$javaexceptionname\$" ../java_exceptions_list; then
+						judge_log "Runtime Error $(javaexceptionname)"
+					else
+						judge_log "Runtime Error"
+					fi
+					continue
 				fi
 			fi
 		fi

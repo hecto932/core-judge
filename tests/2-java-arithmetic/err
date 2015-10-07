@@ -1,0 +1,3 @@
+Picked up JAVA_TOOL_OPTIONS: -javaagent:/usr/share/java/jayatanaag.jar 
+java.security.policy: error al agregar un permiso, java.lang.ArithmeticException:
+	java.lang.ClassCastException: java.lang.ArithmeticException cannot be cast to java.security.Permission
